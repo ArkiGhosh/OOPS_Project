@@ -44,6 +44,7 @@
 
     $:{
         getUsers();
+        console.log(un);
     }
 
 
