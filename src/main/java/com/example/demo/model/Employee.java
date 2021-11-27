@@ -3,7 +3,8 @@ import org.springframework.data.cassandra.core.mapping.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NonNull;
-import lombok.Setter;@AllArgsConstructor
+import lombok.Setter;
+@AllArgsConstructor
 
 
 
@@ -19,4 +20,5 @@ public class Employee {
  private @NonNull String email;
  private @NonNull String number;
  private @NonNull String crn;
+ private Boolean active;
 }

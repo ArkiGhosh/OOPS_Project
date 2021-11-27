@@ -1,11 +1,11 @@
-    <script>
+   
+ <script>
         import { Router, navigate } from "svelte-navigator";
         let flag = false;
         let user_email;
         let otp;
+        let user_otp;
      
-    
-
         function onSubmit(e) {
             const formData = new FormData(e.target);
             flag = true;
@@ -15,6 +15,7 @@
                 data[key] = value;
             }
             data["id"] = "3";
+            data["active"] = false;
             console.log(data);
             fetch("http://localhost:8080/employee", {
                 method: "POST",
@@ -31,7 +32,6 @@
                 })
                 .then((data) => {
                     console.log(data);
-                    nav2();
                 })
                 .catch((err) => {
                     console.log(err.message);
@@ -43,29 +43,7 @@
      
             const s = "http://localhost:8080/otp/" + user_email;
             const data = user_email;
-     
-      /* 
-            fetch(s, {
-                method: "GET",
-                headers: {
-                    "Content-type": "application/json",
-                    Accept: "application/json",
-                    "Access-Control-Allow-Origin": "http://localhost:8080",
-                },
-            })
-                .then((res) => {
-                    console.log(res.json().data());
-                })
-                .then((data) => {
-                    console.log(data);
-                })
-                .catch((err) => {
-                    console.log(err.message);
-                });
-
-                */
-
-                const res = await fetch(s, {
+            const res = await fetch(s, {
                 method: "GET",
                 headers: {
                     "Content-type": "application/json",
@@ -77,21 +55,22 @@
                 console.log(text);
                 otp = text;
                 return text;
-
+     
             
         }
         
         function verify(e) {
+
+            console.log(otp["otp"]);
+            console.log(user_otp);
+
+            if (otp["otp"] == user_otp){
             const formData = new FormData(e.target);
             flag = true;
             const data = {};
-            for (let field of formData) {
-                const [key, value] = field;
-                data[key] = value;
-            }
-            data["id"] = "3";
+                data["email"] = user_email;
             console.log(data);
-            fetch("http://localhost:8080/employee", {
+            fetch("http://localhost:8080/", {
                 method: "POST",
                 headers: {
                     "Content-type": "application/json",
@@ -106,11 +85,20 @@
                 })
                 .then((data) => {
                     console.log(data);
-                    nav2();
                 })
                 .catch((err) => {
                     console.log(err.message);
                 });
+                
+                var msg = document.createElement("P");
+                msg.innerHTML = "Registered successfully";
+                document.getElementById("verification").appendChild(msg);
+            }
+            else{
+                var msg = document.createElement("P");
+                msg.innerHTML = "Incorrect OTP, please try again";
+                document.getElementById("verification").appendChild(msg);
+            }
         }
     </script>
      
@@ -205,7 +193,7 @@
     {#if flag == true}
         <br /><br />
         <form on:submit|preventDefault={otp_generate} class="otpgen" >
-
+     
             <div class="generate">
                 <button type="submit" class="submit-to-generate">
                     <h2><b>Generate OTP</b></h2>
@@ -222,8 +210,10 @@
                 <br />
                 <div class="box">
                     <div class="otp_input">
-                        <input type="text" name="otp_input"/>
+                        <input type="text" name="otp_input" bind:value={user_otp}/>
                     </div>
+                    <br />
+                    <div id="verification"></div>
                     <br />
                     <div class="submitotp">
                         <button type="submit" class="submito"><b>Verify</b></button>
@@ -316,5 +306,9 @@
             background-color: #333;
             color: lawngreen;
             width: 206px;
+        }
+     
+        .verification{
+            color: #333;
         }
     </style>

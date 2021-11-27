@@ -57,6 +57,7 @@ public class EmployeeController
    emp.setEmail(newEmployee.getEmail());
    emp.setNumber(newEmployee.getNumber());
    emp.setCrn(newEmployee.getCrn());
+   emp.setActive(newEmployee.getActive());
    employeeRepository.save(emp);
   }
   return optionalEmp;
@@ -73,7 +74,7 @@ public class EmployeeController
  public Employee addEmployee(@RequestBody Employee newEmployee)
  {
   String id = String.valueOf(new Random().nextInt());
-  Employee emp = new Employee(id, newEmployee.getFirstname(), newEmployee.getLastname(), newEmployee.getUsername(),newEmployee.getPassword(),newEmployee.getAddress(),newEmployee.getEmail(),newEmployee.getNumber(),newEmployee.getCrn());
+  Employee emp = new Employee(id, newEmployee.getFirstname(), newEmployee.getLastname(), newEmployee.getUsername(),newEmployee.getPassword(),newEmployee.getAddress(),newEmployee.getEmail(),newEmployee.getNumber(),newEmployee.getCrn(),newEmployee.getActive());
 
 
 
