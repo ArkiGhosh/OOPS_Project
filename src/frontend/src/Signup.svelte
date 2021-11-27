@@ -5,7 +5,50 @@
         let user_email;
         let otp;
         let user_otp;
-     
+
+        let userNameTaken = false;
+        
+        let password = "", cpassword = "",fn="",ln="",un="",ad="",em="",nm="",cr="";
+
+
+
+        
+        async function getUsers(){
+
+        const res = await fetch("http://localhost:8080/employees",
+        
+            {
+                method: "GET",
+                headers: {
+                    "Content-type": "application/json",
+                    "Accept": "application/json",
+                    "Access-Control-Allow-Origin": "http://localhost:8080",
+                },
+            }
+        )
+
+
+        const users = await res.json()
+
+        
+        for (let i = 0;i<users.length;i++){
+            if(users[i]["username"]==un){
+                userNameTaken = true;
+                return;
+            }
+
+        }
+        userNameTaken = false;
+
+    }
+
+    $:{
+        getUsers();
+    }
+
+
+
+
         function onSubmit(e) {
             const formData = new FormData(e.target);
             flag = true;
@@ -59,36 +102,24 @@
             
         }
         
-        function verify(e) {
+        async function verify(e) {
 
             console.log(otp["otp"]);
             console.log(user_otp);
 
             if (otp["otp"] == user_otp){
-            const formData = new FormData(e.target);
-            flag = true;
-            const data = {};
-                data["email"] = user_email;
-            console.log(data);
-            fetch("http://localhost:8080/", {
-                method: "POST",
+                const s = "http://localhost:8080/setact/" + user_email;
+                const data = user_email;
+                const res = await fetch(s, {
+                method: "GET",
                 headers: {
                     "Content-type": "application/json",
-                    "Cache-Control": "no-cache",
-                    'Accept': "application/json",
+                    Accept: "application/json",
                     "Access-Control-Allow-Origin": "http://localhost:8080",
                 },
-                body: JSON.stringify(data),
-            })
-                .then((res) => {
-                    res.json();
-                })
-                .then((data) => {
-                    console.log(data);
-                })
-                .catch((err) => {
-                    console.log(err.message);
-                });
+                    });
+
+            
                 
                 var msg = document.createElement("P");
                 msg.innerHTML = "Registered successfully";
@@ -116,20 +147,20 @@
                         <div>
                             First
                             name:&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&ensp;
-                            <input type="text" name="firstname" class="firstname" />
+                            <input type="text" name="firstname" class="firstname" bind:value="{fn}"/>
                         </div>
                         <br />
      
                         <div>
                             Last
                             name:&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&ensp;
-                            <input type="text" name="lastname" class="lastname" />
+                            <input type="text" name="lastname" class="lastname" bind:value="{ln}"/>
                         </div>
                         <br />
      
                         <div>
                             Username:&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&ensp;
-                            <input type="text" name="username" class="username" />
+                            <input type="text" name="username" class="username" bind:value="{un}"/>
                         </div>
                         <br />
      
@@ -139,6 +170,7 @@
                                 type="password"
                                 name="password"
                                 class="password"
+                                bind:value="{password}"
                             />
                         </div>
                         <br />
@@ -149,13 +181,14 @@
                                 type="password"
                                 name="cpassword"
                                 class="cpassword"
+                                bind:value="{cpassword}"
                             />
                         </div>
                         <br />
      
                         <div>
                             Residential Address: &emsp;&emsp;&ensp;
-                            <input type="text" name="address" class="address" />
+                            <input type="text" name="address" class="address" bind:value="{ad}"/>
                         </div>
                         <br />
      
@@ -168,20 +201,29 @@
      
                         <div>
                             Mobile number: &nbsp;&emsp;&emsp;&emsp;&emsp;&nbsp;
-                            <input type="text" name="number" class="number" />
+                            <input type="text" name="number" class="number" bind:value="{nm}"/>
                         </div>
                         <br />
      
                         <div>
                             Car Registration Number:
-                            <input type="text" name="crn" class="crn" />
+                            <input type="text" name="crn" class="crn" bind:value="{cr}"/>
                         </div>
      
                         <br /><br />
+
+                        {#if password!=cpassword}
+                            <p>Type the same password</p>
+
+                        {:else if userNameTaken==true}
+                            <p style="color: red;">Username has already been taken</p>
+                        {:else}
                         <div class="submit-button">
                             <button class="submit-button"><b>Sign up</b></button>
                         </div>
                         <br />
+
+                        {/if}
      
                         <pre>Have an account? Click to <a href = "http://localhost:5000/">Login!</a></pre>
                     </div>

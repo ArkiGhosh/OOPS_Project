@@ -20,7 +20,7 @@ let brr = [
 
 
 
-    <h1>JOJO</h1>
+    <h1>Jojo</h1>
 
 
     <form on:submit|preventDefault={function(){fl=true}}>

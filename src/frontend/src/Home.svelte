@@ -4,7 +4,7 @@
     let firstname, lastname, email;
     import { GoogleAuth} from '@beyonk/svelte-social-auth'
     import {Router, navigate} from "svelte-navigator";
-    let username, password;
+    let username, password,role;
     const nav1 = () => {
         navigate("Signup");
     }
@@ -18,11 +18,126 @@
         firstname = data.vu.jf.split(" ")[0]
         lastname = data.vu.jf.split(" ")[1]
         email = data.vu.jv
-        console.log(firstname)
-        console.log(lastname)
-        console.log(email)
+        
+
+
+        getUsersO();
 
     }
+
+    let incorrect = false;
+
+    async function getUsersO(){
+
+        const res = await fetch("http://localhost:8080/employees",
+        
+            {
+                method: "GET",
+                headers: {
+                    "Content-type": "application/json",
+                    "Accept": "application/json",
+                    "Access-Control-Allow-Origin": "http://localhost:8080",
+                },
+            }
+        )
+
+
+        const users = await res.json()
+
+        
+        for (let i = 0;i<users.length;i++){
+            if(users[i]["email"] == email){
+                nav2();
+
+            }
+           
+
+        }
+      
+    }
+
+
+
+    async function getUsers(){
+
+        const res = await fetch("http://localhost:8080/employees",
+        
+            {
+                method: "GET",
+                headers: {
+                    "Content-type": "application/json",
+                    "Accept": "application/json",
+                    "Access-Control-Allow-Origin": "http://localhost:8080",
+                },
+            }
+        )
+
+
+        const users = await res.json()
+
+        
+        for (let i = 0;i<users.length;i++){
+            if(users[i]["username"]==username && users[i]["password"]==password){
+                nav2();
+            }
+
+        }
+      
+        incorrect = true;
+    }
+
+    async function getAdmin(){
+
+        const res = await fetch("http://localhost:8080/admins",
+        
+            {
+                method: "GET",
+                headers: {
+                    "Content-type": "application/json",
+                    "Accept": "application/json",
+                    "Access-Control-Allow-Origin": "http://localhost:8080",
+                },
+            }
+        )
+
+
+        const admins = await res.json()
+
+        
+        for (let i = 0;i<admins.length;i++){
+            if(admins[i]["username"]==username && admins[i]["password"]==password){
+                nav2();
+            }
+
+        }
+      
+        incorrect = true;
+    }
+
+
+
+
+    function login(){
+        if(role=="User"){
+           getUsers();
+
+
+        }
+        else if(role=="Admin"){
+            getAdmin();
+        }
+        else{
+
+        }
+
+    }
+
+
+
+
+
+
+
     
 </script>
 
@@ -43,6 +158,7 @@
         <h1>Login</h1>
         <br>
         <div class = "box">
+
             <div class = "user">
             <label for="username">Username</label>
             <input type="text" name="username" bind:value={username}>
@@ -53,18 +169,23 @@
             </div>
             <div class = "role">
                 <label for = "role">Choose your role:</label>
-                <select name = "role" id = "role">
+                <select name = "role" id = "role" bind:value="{role}">
                     <option value = "User">User</option>
                     <option value = "Admin">Administrator</option>
-                    <option value = "Employee">Employee</option>
+                    <option value = "Worker">Worker</option>
                 </select>
             </div>
             <br><br>
             <div class = "submit-button">
-            <button type = "submit" class = "submit-button"><b>Login</b></button>
+            <button type = "submit" class = "submit-button" on:click="{login}"><b>Login</b></button>
             </div>
             <br>
             <GoogleAuth clientId="679316945176-9vuh27rfnk5g4fg71urgj85s89qfp91c.apps.googleusercontent.com" on:auth-success={e => postlogin(e)} />
+
+                {#if incorrect==true}
+                    <p style="color:red">Incorrect Username or Password</p>
+                {/if}
+
         </div>
     </div>
 </div>
