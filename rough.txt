@@ -40,7 +40,8 @@ curl -X POST \
   -d '{
     "id": 3,
     "slotnum":"A001",
-    "space":"A"
+    "space":"A",
+    "workerids":["123","124"]
 }'
 
 

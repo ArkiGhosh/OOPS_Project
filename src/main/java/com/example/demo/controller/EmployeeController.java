@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
+import java.util.UUID;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import com.example.demo.model.Employee;
@@ -73,7 +75,7 @@ public class EmployeeController
  @PostMapping("/employee")
  public Employee addEmployee(@RequestBody Employee newEmployee)
  {
-  String id = String.valueOf(new Random().nextInt());
+  String id = UUID.randomUUID().toString();
   Employee emp = new Employee(id, newEmployee.getFirstname(), newEmployee.getLastname(), newEmployee.getUsername(),newEmployee.getPassword(),newEmployee.getAddress(),newEmployee.getEmail(),newEmployee.getNumber(),newEmployee.getCrn(),newEmployee.getActive());
 
 

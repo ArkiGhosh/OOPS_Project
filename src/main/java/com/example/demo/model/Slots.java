@@ -19,8 +19,5 @@ public class Slots {
  private @NonNull String slotnum;
  private @NonNull String space;
  private  List<String> workerids;
- private List<String> services;
-
-
 
 }

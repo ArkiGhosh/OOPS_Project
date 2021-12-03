@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.cassandra.core.CassandraOperations;
@@ -91,7 +92,7 @@ public List<Bookings> getEmployee(@PathVariable String space, @PathVariable Stri
  @PostMapping("/booking")
  public Bookings addBookings(@RequestBody Bookings newBooking)
  {
-  String id = String.valueOf(new Random().nextInt());
+  String id = UUID.randomUUID().toString();
   Bookings boo = new Bookings(id, newBooking.getSlotid(), newBooking.getSpace(), newBooking.getCost(),newBooking.getIntime(),newBooking.getOuttime(),newBooking.getDate(),newBooking.getUsers());
 
 
