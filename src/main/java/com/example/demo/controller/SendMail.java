@@ -23,4 +23,15 @@ public class SendMail {
             System.out.println("Mail sent !!!!");
 
         }
+
+        public void sendPaymentConfirmation(String result,String email)
+        {
+            SimpleMailMessage mailMessage = new SimpleMailMessage();
+            mailMessage.setFrom("testnumber1024@gmail.com");
+            mailMessage.setTo(email);
+            mailMessage.setSubject("Payment confirmation");            
+            String message = result;
+            mailMessage.setText(message);
+            sender.send(mailMessage);
+        }
 }

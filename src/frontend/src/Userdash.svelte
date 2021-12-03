@@ -44,12 +44,16 @@ import { space } from "svelte/internal";
             { name: "70A", cost: "12$" },
         ];
         var brr = {};
-        
+        var frr = {};
+    
         //Dec 3
 
 
         let loc;
         let date,intime,outtime
+        let cost
+
+        $: cost = 25*(outtime-intime)
 
           async function search(e) {
          
@@ -74,7 +78,7 @@ import { space } from "svelte/internal";
                     });
 
             const slots = await res.json()
-            
+            console.log(date)
             
             s = "http://localhost:8080/bookings/space/"+loc+"/date/"+date
 
@@ -98,6 +102,7 @@ import { space } from "svelte/internal";
 
             for(let i =0;i<arr.length;i++){
                 brr[arr[i].slotnum] = "success";
+                frr[arr[i].slotnum] = "1hr";
             }
 
             console.log(bookings)
@@ -116,6 +121,8 @@ import { space } from "svelte/internal";
                     console.log("here")
                     if(!((boo.outtime<(intime))||((outtime)<(boo.intime)))){
                         brr[boo.slotid]="danger";
+                        frr[boo.slotid]=boo.outtime-intime;
+                        if(boo.outtime==intime) brr[boo.slotid] = "success"
                     }
                 }                
 
@@ -273,11 +280,14 @@ import { space } from "svelte/internal";
                                 color="{brr[a.slotnum]}"
                                 style="width: 18rem;display:inline-block;"
                             >
-                        
-                           
-                              
-                                    <h3>{a.slotnum}</h3>
-                                <p>42</p>
+                              <CardHeader>
+                                  <CardTitle>  <h3>{a.slotnum}</h3></CardTitle>
+                                </CardHeader>
+                                {#if brr[a.slotnum]=='danger'}
+                                    <p>Free after {frr[a.slotnum]}hr(s) of check-in</p>
+                                {/if}
+
+                                <h4>Cost = {cost}Rs.</h4>
                               
                             </Card>
                         </div>

@@ -27,7 +27,7 @@ curl -X POST \
     "cost":69,
     "intime":12,
     "outtime":14,
-    "date":"03-12-2021",
+    "date":"2021-03-21",
     "users":["popli","popo"]
 }'
 
