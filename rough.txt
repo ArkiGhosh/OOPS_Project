@@ -15,7 +15,33 @@ curl -X POST \
     "cr_number": "69"
 }'
 
+#create booking
+curl -X POST \
+  http://localhost:8080/booking \
+  -H 'Cache-Control: no-cache' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "id": 3,
+    "slotid":"69420",
+    "space":"A",
+    "cost":69,
+    "intime":12,
+    "outtime":14,
+    "date":"03-12-2021",
+    "users":["popli","popo"]
+}'
 
+
+#Create slots
+curl -X POST \
+  http://localhost:8080/slot \
+  -H 'Cache-Control: no-cache' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "id": 3,
+    "slotnum":"A001",
+    "space":"A"
+}'
 
 
 #get all employees

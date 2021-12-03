@@ -3,7 +3,8 @@
 <script>
     let firstname, lastname, email;
     import { GoogleAuth} from '@beyonk/svelte-social-auth'
-    import {Router, navigate} from "svelte-navigator";
+    import {Router, navigate} from "svelte-navigator"
+    import {userName} from './store'
     let username, password,role;
     const nav1 = () => {
         navigate("Signup");
@@ -47,6 +48,9 @@
         
         for (let i = 0;i<users.length;i++){
             if(users[i]["email"] == email){
+
+                userName.set(users[i]["username"])
+
                 nav2();
 
             }
@@ -78,6 +82,9 @@
         
         for (let i = 0;i<users.length;i++){
             if(users[i]["username"]==username && users[i]["password"]==password){
+
+                $userName = users[i]["username"]
+
                 nav2();
             }
 
