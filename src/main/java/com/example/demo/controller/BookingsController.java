@@ -38,25 +38,27 @@ private CassandraOperations cassandraOperations;
 
 
  /*
- 
  @GetMapping("/bookings/{id}")
  public Optional<Bookings> getEmployee(@PathVariable String id)
  {
   Optional<Bookings> emp = bookingsRepository.findById(id);
   return emp;
  }
- 
- @PutMapping("/bookings/{id}")
- public Optional<Bookings> updateEmployee(@RequestBody Bookings newBooking, @PathVariable String id)
+ */
+
+ @CrossOrigin
+ @GetMapping("/bookings/update/{id}/{user}")
+ public Optional<Bookings> updateEmployee(@PathVariable String id, @PathVariable String user)
  {
   Optional<Bookings> optionalBoo = bookingsRepository.findById(id);
   if (optionalBoo.isPresent()) {
    Bookings boo = optionalBoo.get();
 
-   boo.setCost(newBooking.getCost());
-   boo.setIntime(newBooking.getIntime());
-   boo.setOuttime(newBooking.getOuttime());
-   boo.setUsers(newBooking.getUsers());
+    List<String> li = boo.getUsers();
+
+    li.add(user);
+
+   boo.setUsers(li);
 
    bookingsRepository.save(boo);
 
@@ -64,7 +66,9 @@ private CassandraOperations cassandraOperations;
   }
   return optionalBoo;
  }
- */
+
+
+
 
  @GetMapping("/bookings/space/{space}/date/{date}")
 public List<Bookings> getEmployee(@PathVariable String space, @PathVariable String date)

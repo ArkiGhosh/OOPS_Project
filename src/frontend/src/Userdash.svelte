@@ -1,6 +1,6 @@
     <script>
         import { Router, navigate } from "svelte-navigator";
-        import { Form, FormGroup, FormText, Input, Label } from "sveltestrap";
+        import { Alert, Form, FormGroup, FormText, Input, Label, ListGroup, ListGroupItem } from "sveltestrap";
         import { userName } from "./store";
         import { Styles } from "sveltestrap";
         import { Col, Container, Row } from "sveltestrap";
@@ -27,7 +27,7 @@
             DropdownMenu,
             DropdownItem,
         } from "sveltestrap";
-import { space } from "svelte/internal";
+import { each, space } from "svelte/internal";
      
         let isOpen = false;
      
@@ -36,22 +36,18 @@ import { space } from "svelte/internal";
         }
         let fl = false;
         let fll = false;
-        let arr = [
-            { name: "6A", cost: "12$" },
-            { name: "69A", cost: "12$" },
-            { name: "67A", cost: "12$" },
-            { name: "68A", cost: "12$" },
-            { name: "70A", cost: "12$" },
-        ];
+        let arr = [];
         var brr = {};
         var frr = {};
-    
+        var bools = [];
         //Dec 3
-
+        let bookings;
 
         let loc;
         let date,intime,outtime
         let cost
+        let waiting_list_vis = []
+        let waiting_list_list = {}
 
         $: cost = 25*(outtime-intime)
 
@@ -93,7 +89,7 @@ import { space } from "svelte/internal";
                     });
 
 
-            let bookings = await res2.json()
+             bookings = await res2.json()
 
 
             arr = slots
@@ -103,6 +99,8 @@ import { space } from "svelte/internal";
             for(let i =0;i<arr.length;i++){
                 brr[arr[i].slotnum] = "success";
                 frr[arr[i].slotnum] = "1hr";
+                bools[i] = false;
+                waiting_list_vis[i] = false;
             }
 
             console.log(bookings)
@@ -122,7 +120,7 @@ import { space } from "svelte/internal";
                     if(!((boo.outtime<(intime))||((outtime)<(boo.intime)))){
                         brr[boo.slotid]="danger";
                         frr[boo.slotid]=boo.outtime-intime;
-                        if(boo.outtime==intime) brr[boo.slotid] = "success"
+                        if(boo.outtime==intime ||boo.intime==outtime) brr[boo.slotid] = "success"
                     }
                 }                
 
@@ -137,12 +135,76 @@ import { space } from "svelte/internal";
 
 
 
+        async function details(i,b,slotn){
+            bools[i]=bools[i]^1
+
+            //show services and worker name and rating
+            
+            
+            //waiting list
+
+                
+
+        }
 
 
 
 
+        async function wating_list(slotn,j){
+
+            waiting_list_vis[j] = !waiting_list_vis[j]
+            
+            for(let i = 0;i<bookings.length;i++){
+                    let boo = bookings[i]
+                    if(boo.slotid == slotn){
 
 
+                        let s = "http://localhost:8080/bookings/update/"+boo.id+"/"+$userName
+                        let lis = []
+                        lis = boo.users 
+                        console.log(lis)
+                        lis.push($userName)
+                        const data = {}
+                        data["users"] = lis
+
+            const res = await fetch(s, {
+                method: "GET",
+                headers: {
+                    "Content-type": "application/json",
+                    Accept: "application/json",
+                    "Access-Control-Allow-Origin": "http://localhost:8080",
+                },
+             
+                    })
+                
+                waiting_list_list[j] = lis
+                    console.log(waiting_list_list)
+
+                
+                var li = document.createElement("ul");
+                var ss = "";
+                for(let i= 0;i<lis.length;i++){
+                    console.log("=========")
+
+                    console.log(lis[i])
+
+                    ss += "<li>"
+                    ss+= lis[i]
+                    ss+= "</li>"
+
+                
+
+                }
+
+                   
+                li.innerHTML = ss;
+                document.getElementById(j).appendChild(li);
+
+
+                    }
+                }
+
+        }
 
 
 
@@ -270,9 +332,9 @@ import { space } from "svelte/internal";
     {#if fl == true}
         <Container>
             <Row cols={3} style="margin-bottom: 5px;">
-                {#each arr as a}
+                {#each arr as a,i}
                     <Col style="margin-bottom: 10px;">
-                        <div class="search-container">
+                        <div class="search-container" >
                          
                             <Card
                                 class="slots"
@@ -280,15 +342,26 @@ import { space } from "svelte/internal";
                                 color="{brr[a.slotnum]}"
                                 style="width: 18rem;display:inline-block;"
                             >
-                              <CardHeader>
+                              <CardHeader on:click="{()=>details(i,brr[a.slotnum],a.slotnum)}">
                                   <CardTitle>  <h3>{a.slotnum}</h3></CardTitle>
                                 </CardHeader>
                                 {#if brr[a.slotnum]=='danger'}
                                     <p>Free after {frr[a.slotnum]}hr(s) of check-in</p>
+
+
+                                    <Button color="warning" on:click = "{()=>wating_list(a.slotnum,i)}">Join waiting list</Button>
+
+                                    <div id={i}></div>
+               
                                 {/if}
 
                                 <h4>Cost = {cost}Rs.</h4>
                               
+                                {#if bools[i]}
+                                    <p>Maxtime = {outtime-intime}</p>
+                                {/if}
+                             
+
                             </Card>
                         </div>
                     </Col>
