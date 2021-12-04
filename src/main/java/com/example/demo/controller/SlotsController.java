@@ -87,7 +87,7 @@ private CassandraOperations cassandraOperations;
  {
   //String id = String.valueOf(new Random().nextInt());
   String id = UUID.randomUUID().toString();
-  Slots emp = new Slots(id, newSlot.getSlotnum(), newSlot.getSpace(),newSlot.getWorkerids());
+  Slots emp = new Slots(id, newSlot.getSlotnum(), newSlot.getSpace(),newSlot.getWorkerid());
 
 
 

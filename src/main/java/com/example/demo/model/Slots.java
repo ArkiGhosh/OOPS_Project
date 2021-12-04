@@ -18,6 +18,6 @@ public class Slots {
  private @NonNull String id;
  private @NonNull String slotnum;
  private @NonNull String space;
- private  List<String> workerids;
+ private String workerid;
 
 }

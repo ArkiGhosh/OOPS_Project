@@ -4,7 +4,7 @@
     let firstname, lastname, email;
     import { GoogleAuth} from '@beyonk/svelte-social-auth'
     import {Router, navigate} from "svelte-navigator"
-    import {userName} from './store'
+    import {userName, userId} from './store'
     let username, password,role;
     const nav1 = () => {
         navigate("Signup");
@@ -30,7 +30,7 @@
 
     async function getUsersO(){
 
-        const res = await fetch("http://localhost:8080/employees",
+        const res = await fetch("http://localhost:8080/users",
         
             {
                 method: "GET",
@@ -50,7 +50,7 @@
             if(users[i]["email"] == email){
 
                 userName.set(users[i]["username"])
-
+                userId.set(users[i]["id"])
                 nav2();
 
             }
@@ -64,7 +64,7 @@
 
     async function getUsers(){
 
-        const res = await fetch("http://localhost:8080/employees",
+        const res = await fetch("http://localhost:8080/users",
         
             {
                 method: "GET",
@@ -84,7 +84,7 @@
             if(users[i]["username"]==username && users[i]["password"]==password){
 
                 $userName = users[i]["username"]
-
+                $userId  = users[i]["id"]
                 nav2();
             }
 

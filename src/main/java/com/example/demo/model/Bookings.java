@@ -23,4 +23,5 @@ public class Bookings {
  private int outtime;
  private String date;
  private List<String> users;
+ private List<String> services;
 }

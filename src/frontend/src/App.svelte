@@ -4,6 +4,7 @@
 	import Otp from "./Otp.svelte";
 	import Userdash from "./Userdash.svelte";
 	import {Router, Route} from "svelte-navigator";
+import Profile from "./Profile.svelte";
 </script>
 
 <Router>
@@ -13,6 +14,7 @@
 	<Route path = "/Signup"><Signup /></Route>
 	<Route path = "/Otp"><Otp /></Route>
 	<Route path = "/Userdash"><Userdash /></Route>
+	<Route path = "/Profile"><Profile /></Route>
 
 </main>
 </Router>

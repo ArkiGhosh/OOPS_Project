@@ -15,7 +15,7 @@
         
         async function getUsers(){
 
-        const res = await fetch("http://localhost:8080/employees",
+        const res = await fetch("http://localhost:8080/users",
         
             {
                 method: "GET",
@@ -61,7 +61,7 @@
             data["id"] = "3";
             data["active"] = false;
             console.log(data);
-            fetch("http://localhost:8080/employee", {
+            fetch("http://localhost:8080/add_user", {
                 method: "POST",
                 headers: {
                     "Content-type": "application/json",

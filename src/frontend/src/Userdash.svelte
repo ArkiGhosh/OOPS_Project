@@ -1,7 +1,7 @@
     <script>
         import { Router, navigate } from "svelte-navigator";
         import { Alert, Form, FormGroup, FormText, Input, Label, ListGroup, ListGroupItem } from "sveltestrap";
-        import { userName } from "./store";
+        import { userName,userId } from "./store";
         import { Styles } from "sveltestrap";
         import { Col, Container, Row } from "sveltestrap";
         import {
@@ -28,6 +28,7 @@
             DropdownItem,
         } from "sveltestrap";
 import { each, space } from "svelte/internal";
+import Profile from "./Profile.svelte";
      
         let isOpen = false;
      
@@ -48,6 +49,11 @@ import { each, space } from "svelte/internal";
         let cost
         let waiting_list_vis = []
         let waiting_list_list = {}
+        let booking_flags = []
+        let dry_clean = []
+        let car_wash =[]
+        let tyre_fill = []
+        let no_balance = false;
 
         $: cost = 25*(outtime-intime)
 
@@ -101,6 +107,10 @@ import { each, space } from "svelte/internal";
                 frr[arr[i].slotnum] = "1hr";
                 bools[i] = false;
                 waiting_list_vis[i] = false;
+                booking_flags[i] = false;
+                car_wash[i]  = false;
+                tyre_fill[i] = false;
+                dry_clean[i] = false;
             }
 
             console.log(bookings)
@@ -143,7 +153,8 @@ import { each, space } from "svelte/internal";
             
             //waiting list
 
-                
+            
+
 
         }
 
@@ -209,6 +220,118 @@ import { each, space } from "svelte/internal";
 
 
 
+        async function newbooking(i,slotn){
+            
+            //add services to booking table
+            //add booking id to user and worker table
+            //check if balance is enough
+            let ser = []
+
+            if(dry_clean[i]){
+                ser.push("Dry Clean")
+            }
+            if(car_wash[i]) {
+                cost += 15
+                ser.push("Car Wash")
+            }
+            if(tyre_fill[i]) {
+                
+                cost += 5
+                ser.push("Fill Tyres")
+            }
+
+
+
+
+
+            let s = "http://localhost:8080/pay/"+$userId+"/"+cost;
+
+            const res = await fetch(s, {
+                method: "GET",
+                headers: {
+                    "Content-type": "application/json",
+                    Accept: "application/json",
+                    "Access-Control-Allow-Origin": "http://localhost:8080",
+                },
+                    });
+
+            const proceed = await res.json()
+
+            if(proceed=="true"){
+
+            
+            let s = "http://localhost:8080/booking";
+
+            let data = {}
+
+            data['id'] = 3;
+            data['slotid']  = slotn
+            data['space'] = loc
+            data['cost'] = cost
+            data['intime'] = intime
+            data['outtime']  = outtime
+            data['date'] = date
+            data['users'] = [$userName]
+            data['services'] = ser
+            
+            const res = await fetch(s, {
+                method: "POST",
+                headers: {
+                    "Content-type": "application/json",
+                    Accept: "application/json",
+                    "Access-Control-Allow-Origin": "http://localhost:8080",
+                },
+                body: JSON.stringify(data),
+                    }).then((res) => {
+                    res.json();
+                })
+                .then((data) => {
+                    console.log(data);
+                })
+                .catch((err) => {
+                    console.log(err.message);
+                });
+
+                let bo = await res.json()
+                
+                //adds booking id to worker
+                s = "http://localhost:8080/worker/update/"+slotn+"/"+bo.id;
+
+
+                const res2 = await fetch(s, {
+                method: "GET",
+                headers: {
+                    "Content-type": "application/json",
+                    Accept: "application/json",
+                    "Access-Control-Allow-Origin": "http://localhost:8080",
+                },
+             
+                    })
+
+
+                s = "http://localhost:8080/worker/update/"+$userId+"/"+bo.id;
+
+
+                const res3 = await fetch(s, {
+                method: "GET",
+                headers: {
+                    "Content-type": "application/json",
+                    Accept: "application/json",
+                    "Access-Control-Allow-Origin": "http://localhost:8080",
+                },
+             
+                    })
+
+                no_balance = false;
+            }
+            else{
+                //Add error
+                no_balance = true;
+            }
+
+
+        }
+
 
 
 
@@ -255,8 +378,8 @@ import { each, space } from "svelte/internal";
                     <Dropdown nav inNavbar>
                         <DropdownToggle nav caret>Options</DropdownToggle>
                         <DropdownMenu end>
-                            <DropdownItem>Profile</DropdownItem>
-                            <DropdownItem>Log Out</DropdownItem>
+                            <DropdownItem><a href="#" on:click="{()=>navigate("Profile")}">Profile</a></DropdownItem>
+                            <DropdownItem><a href="#" on:click="{()=>navigate("Home")}">Log Out</a></DropdownItem>
                         </DropdownMenu>
                     </Dropdown>
                 </Nav>
@@ -345,6 +468,8 @@ import { each, space } from "svelte/internal";
                               <CardHeader on:click="{()=>details(i,brr[a.slotnum],a.slotnum)}">
                                   <CardTitle>  <h3>{a.slotnum}</h3></CardTitle>
                                 </CardHeader>
+
+                            {#if bools[i]}    
                                 {#if brr[a.slotnum]=='danger'}
                                     <p>Free after {frr[a.slotnum]}hr(s) of check-in</p>
 
@@ -352,12 +477,35 @@ import { each, space } from "svelte/internal";
                                     <Button color="warning" on:click = "{()=>wating_list(a.slotnum,i)}">Join waiting list</Button>
 
                                     <div id={i}></div>
-               
+                                
+                                {:else}
+                                <br>
+                                <Button color="secondary" on:click = "{()=>{booking_flags[i]=!booking_flags[i]}}">BOOK</Button>
+
+                                {#if booking_flags[i]}
+
+                                    <Form>
+                                        <FormGroup>
+
+                                            <Input type="checkbox" bind:checked = {dry_clean[i]} label = "Dry Clean" /> 
+                                            <Input type="checkbox" bind:checked = {car_wash[i]} label = "Car Wash" /> 
+                                            <Input type="checkbox" bind:checked = {tyre_fill[i]} label = "Fill Tyres" /> 
+                                            
+                                            <Button color="primary" on:click="{()=>{newbooking(i,a.slotnum)}}">Pay</Button>
+
+                                        </FormGroup>
+                                    </Form>
+
+            
+                                    {#if no_balance}
+                                        <Alert color="danger" dismissible>Not enough balance in wallet</Alert>
+                                    {/if}
+                                {/if}
+
                                 {/if}
 
                                 <h4>Cost = {cost}Rs.</h4>
                               
-                                {#if bools[i]}
                                     <p>Maxtime = {outtime-intime}</p>
                                 {/if}
                              

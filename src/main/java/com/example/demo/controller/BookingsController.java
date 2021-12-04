@@ -97,7 +97,7 @@ public List<Bookings> getEmployee(@PathVariable String space, @PathVariable Stri
  public Bookings addBookings(@RequestBody Bookings newBooking)
  {
   String id = UUID.randomUUID().toString();
-  Bookings boo = new Bookings(id, newBooking.getSlotid(), newBooking.getSpace(), newBooking.getCost(),newBooking.getIntime(),newBooking.getOuttime(),newBooking.getDate(),newBooking.getUsers());
+  Bookings boo = new Bookings(id, newBooking.getSlotid(), newBooking.getSpace(), newBooking.getCost(),newBooking.getIntime(),newBooking.getOuttime(),newBooking.getDate(),newBooking.getUsers(),newBooking.getServices());
 
 
 
