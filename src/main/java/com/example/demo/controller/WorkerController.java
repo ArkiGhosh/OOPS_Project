@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import com.example.demo.model.Feedback;
 //import com.example.demo.model.Feedback;
 import com.example.demo.model.Worker;
 import com.example.demo.repository.WorkerRepository;
@@ -101,6 +102,51 @@ public class WorkerController {
   return optionalBoo;
  } 
 
+
+    @CrossOrigin
+ @GetMapping("/workers")
+    public List<Worker> getworkers()
+    {
+    Iterable<Worker> result = workerRepository.findAll();
+    List<Worker> usersList = new ArrayList<Worker>();
+    result.forEach(usersList::add);
+    return usersList;
+    }
+
+     @CrossOrigin
+    @PostMapping("/feedback/{slot}")
+    public String get_feedback(@RequestBody Feedback feedback,@PathVariable String slot)
+    {
+        Optional<Worker> optionalWorker = workerRepository.findBySlot(slot);
+        Worker worker = optionalWorker.get();
+        int rating = feedback.getRating(); // send -1 if no value is entered
+
+        if (rating != -1)
+        {
+            worker.setNo_of_ratings(worker.getNo_of_ratings()+1);
+            worker.setTotal_ratings(worker.getTotal_ratings()+rating);
+            worker.setAvg_rating((float)(worker.getTotal_ratings())/worker.getNo_of_ratings());
+        }
+        
+        String comment = feedback.getComment();
+
+
+        List<String> comment_List = new ArrayList<String>();
+
+        
+        if (comment!=null)
+        {
+            if(worker.getComments()!=null)
+                comment_List = worker.getComments();
+            comment_List.add(comment);
+            worker.setComments(comment_List);
+        
+        }
+        
+        workerRepository.save(worker);
+
+                return "{ \"rating\":"+worker.getAvg_rating()+"}";
+    }
 
 /*
     @PostMapping("/feedback/{id}")

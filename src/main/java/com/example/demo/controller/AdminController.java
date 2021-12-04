@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
+import java.util.UUID;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import com.example.demo.model.Admin;
@@ -26,6 +28,23 @@ AdminRepository adminRepository;
   return adminList;
  }
 
+@CrossOrigin 
+    @PostMapping("/add_admin")
+    public Admin adduser(@RequestBody Admin newuser)
+    {
+  String id = UUID.randomUUID().toString();
+    Admin admin = new Admin(
+        id, 
+        newuser.getFirstname(), 
+        newuser.getLastname(), 
+        newuser.getUsername(),
+        newuser.getPassword()
 
+        );
+
+        adminRepository.save(admin);
+
+    return admin;
+    }
 
 }

@@ -144,15 +144,16 @@ public class UserController
   if (optionalBoo.isPresent()) {
    User woo = optionalBoo.get();
 
-    List<String> li = woo.getBookingids();
+    
 
+List<String> li = new ArrayList<String>();
+    if(woo.getBookingids()!=null)
+        li = woo.getBookingids();
     li.add(booking);
 
    woo.setBookingids(li);
 
    userRepository.save(woo);
-
-
   }
   return optionalBoo;
  } 
@@ -161,8 +162,8 @@ public class UserController
 
 
 /*
-    @CrossOrigin
-    @PostMapping("/feedback/{id}")
+  @CrossOrigin
+    @PostMapping("/feedback/{worker_id}")
     public void get_feedback(@RequestBody Feedback feedback,@PathVariable String worker_id)
     {
         Optional<Worker> optionalWorker = workerRepository.findById(worker_id);
@@ -176,14 +177,17 @@ public class UserController
             worker.setAvg_rating((float)(worker.getTotal_ratings())/worker.getNo_of_ratings());
         }
         
-        String comment = feedback.getComments();
-        List<String> comments_List = worker.getComments();
+        String comment = feedback.getComment();
 
-        if (comment != null)
+        
+        if (comment!=null)
         {
-            comments_List.add(comment);
-            worker.setComments(comments_List);
+            List<String> comment_List = worker.getComments();
+            comment_List.add(comment);
+            worker.setComments(comment_List);
         }
+        
+        workerRepository.save(worker);
     }
 
     */

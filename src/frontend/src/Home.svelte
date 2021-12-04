@@ -12,6 +12,9 @@
     const nav2 = () =>{
         navigate("Userdash");
     }
+    const nav3 = () =>{
+        navigate("Admin");
+    }
 
     let data;
     function postlogin(e){
@@ -113,7 +116,7 @@
         
         for (let i = 0;i<admins.length;i++){
             if(admins[i]["username"]==username && admins[i]["password"]==password){
-                nav2();
+                nav3();
             }
 
         }
@@ -125,6 +128,9 @@
 
 
     function login(){
+        console.log("---")
+        console.log(role)
+        console.log("---")
         if(role=="User"){
            getUsers();
 
