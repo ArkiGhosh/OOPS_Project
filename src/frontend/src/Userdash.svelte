@@ -54,6 +54,8 @@ import Profile from "./Profile.svelte";
         let car_wash =[]
         let tyre_fill = []
         let no_balance = false;
+        let worker_name = []
+        let worker_rating = []
 
         $: cost = 25*(outtime-intime)
 
@@ -142,7 +144,7 @@ import Profile from "./Profile.svelte";
         }
 
 
-
+        
 
 
         async function details(i,b,slotn){
@@ -150,6 +152,26 @@ import Profile from "./Profile.svelte";
 
             //show services and worker name and rating
             
+
+            let s = "http://localhost:8080/get_worker_by_slot/"+slotn
+
+
+            const res2 = await fetch(s, {
+                method: "GET",
+                headers: {
+                    "Content-type": "application/json",
+                    Accept: "application/json",
+                    "Access-Control-Allow-Origin": "http://localhost:8080",
+                },
+                    });
+            
+            let wor = await res2.json()
+
+            console.log(wor)
+
+            worker_name[i] = wor.name 
+            worker_rating[i] = wor.avg_rating
+
             
             //waiting list
 
@@ -218,7 +240,16 @@ import Profile from "./Profile.svelte";
         }
 
 
-
+        function calccost(i){
+           
+            if(car_wash[i]) {
+                cost += 15
+            }
+            if(tyre_fill[i]) {
+                
+                cost += 5
+            }
+        }
 
         async function newbooking(i,slotn){
             
@@ -256,8 +287,8 @@ import Profile from "./Profile.svelte";
                     });
 
             const proceed = await res.json()
-
-            if(proceed=="true"){
+            console.log(proceed)
+            if(proceed["success"]==true){
 
             
             let s = "http://localhost:8080/booking";
@@ -273,7 +304,7 @@ import Profile from "./Profile.svelte";
             data['date'] = date
             data['users'] = [$userName]
             data['services'] = ser
-            
+          
             const res = await fetch(s, {
                 method: "POST",
                 headers: {
@@ -282,17 +313,13 @@ import Profile from "./Profile.svelte";
                     "Access-Control-Allow-Origin": "http://localhost:8080",
                 },
                 body: JSON.stringify(data),
-                    }).then((res) => {
-                    res.json();
-                })
-                .then((data) => {
-                    console.log(data);
-                })
-                .catch((err) => {
-                    console.log(err.message);
-                });
+                    });
 
+                
                 let bo = await res.json()
+                
+                console.log(bo)
+                console.log(bo.id)
                 
                 //adds booking id to worker
                 s = "http://localhost:8080/worker/update/"+slotn+"/"+bo.id;
@@ -309,7 +336,7 @@ import Profile from "./Profile.svelte";
                     })
 
 
-                s = "http://localhost:8080/worker/update/"+$userId+"/"+bo.id;
+                s = "http://localhost:8080/user/update/"+$userId+"/"+bo.id;
 
 
                 const res3 = await fetch(s, {
@@ -470,6 +497,11 @@ import Profile from "./Profile.svelte";
                                 </CardHeader>
 
                             {#if bools[i]}    
+                                   <h4 style="margin-top: 2em;">Cost = {cost}Rs.</h4>
+                              
+                                    <p>Maxtime = {outtime-intime}</p>
+    
+
                                 {#if brr[a.slotnum]=='danger'}
                                     <p>Free after {frr[a.slotnum]}hr(s) of check-in</p>
 
@@ -484,17 +516,16 @@ import Profile from "./Profile.svelte";
 
                                 {#if booking_flags[i]}
 
-                                    <Form>
-                                        <FormGroup>
+                                  
 
                                             <Input type="checkbox" bind:checked = {dry_clean[i]} label = "Dry Clean" /> 
                                             <Input type="checkbox" bind:checked = {car_wash[i]} label = "Car Wash" /> 
                                             <Input type="checkbox" bind:checked = {tyre_fill[i]} label = "Fill Tyres" /> 
-                                            
+                                             
+                                            <Button color="secondary" on:click="{()=>{calccost(i)}}">Calculate Cost</Button>
                                             <Button color="primary" on:click="{()=>{newbooking(i,a.slotnum)}}">Pay</Button>
 
-                                        </FormGroup>
-                                    </Form>
+                                   
 
             
                                     {#if no_balance}
@@ -503,10 +534,13 @@ import Profile from "./Profile.svelte";
                                 {/if}
 
                                 {/if}
-
-                                <h4>Cost = {cost}Rs.</h4>
-                              
-                                    <p>Maxtime = {outtime-intime}</p>
+                            <CardFooter>
+                                Worker Name: {worker_name[i]}<br>
+                                Rating : {worker_rating[i]}/5
+                            
+                                
+                            </CardFooter>
+                             
                                 {/if}
                              
 

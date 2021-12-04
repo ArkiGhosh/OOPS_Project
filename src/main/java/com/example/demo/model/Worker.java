@@ -16,7 +16,6 @@ public class Worker {
  private @NonNull String name;
  private @NonNull String space;
  private @NonNull String slot;
- private @NonNull String service;
  private int hours_worked = 0;
  private float avg_rating = 0;
  private int no_of_ratings = 0;

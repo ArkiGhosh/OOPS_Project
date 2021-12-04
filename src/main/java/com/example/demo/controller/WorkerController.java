@@ -52,6 +52,20 @@ public class WorkerController {
         return worker;
     }
 
+
+    @CrossOrigin
+    @GetMapping(value="/get_worker_by_slot/{slot}")
+    public Worker getWorkerBySlot(@PathVariable String slot)
+    {
+        Worker worker = new Worker();
+        Optional <Worker> obj = workerRepository.findBySlot(slot);
+
+        if (obj!=null)
+            worker = obj.get();
+
+        return worker;
+    }
+
     @PostMapping("/test")
     public String test()
     {
