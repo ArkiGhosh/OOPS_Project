@@ -67,12 +67,16 @@ public class UserController
     return optionaluser;
     }
     
-    @DeleteMapping(value = "/user/{id}", produces = "application/json; charset=utf-8")
-    public String deleteuser(@PathVariable String id) {
-    Boolean result = userRepository.existsById(id);
-    userRepository.deleteById(id);
-    return "{ \"success\" : "+ (result ? "true" : "false") +" }";
+   
+    @CrossOrigin
+    @DeleteMapping(value="/remove_user/{id}")
+    public void removeUser(@PathVariable String id)
+    {
+        userRepository.deleteById(id);
+
     }
+
+
 
     @CrossOrigin 
     @PostMapping("/add_user")

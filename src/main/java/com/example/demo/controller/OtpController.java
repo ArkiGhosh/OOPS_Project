@@ -12,8 +12,8 @@ import java.util.Random;
 import static org.springframework.data.cassandra.core.query.Criteria.where;
 import static org.springframework.data.cassandra.core.query.Query.query;
 
-import com.example.demo.model.Employee;
-import com.example.demo.repository.EmployeeRepository;
+import com.example.demo.model.User;
+import com.example.demo.repository.UserRepository;
 @RestController
 @CrossOrigin
 public class OtpController {
@@ -22,7 +22,7 @@ public class OtpController {
 private CassandraOperations cassandraOperations;
 
 @Autowired
- EmployeeRepository employeeRepository;
+ UserRepository userRepository;
 
 
 @Autowired SendMail sm;
@@ -50,10 +50,10 @@ return "{ \"otp\" : "+ otp+" }";
   public String setAct(@PathVariable String mail)
  {
     
-    Employee emp = cassandraOperations.selectOne(query(where("email").is(mail)).withAllowFiltering(), Employee.class);
+    User us = cassandraOperations.selectOne(query(where("email").is(mail)).withAllowFiltering(), User.class);
 
-    emp.setActive(true);
-    employeeRepository.save(emp);
+    us.setActive(true);
+    userRepository.save(us);
 
     return "{\"hehe\" : \"jeje\"}";
   

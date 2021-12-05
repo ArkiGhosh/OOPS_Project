@@ -142,7 +142,6 @@ public class WorkerController {
             worker.setComments(comment_List);
         
         }
-        
         workerRepository.save(worker);
 
                 return "{ \"rating\":"+worker.getAvg_rating()+"}";

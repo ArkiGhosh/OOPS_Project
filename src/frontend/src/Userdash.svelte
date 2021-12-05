@@ -159,9 +159,10 @@
         let wor = await res2.json();
 
         console.log(wor);
+        let f= parseFloat(wor.avg_rating)
 
         worker_name[i] = wor.name;
-        worker_rating[i] = wor.avg_rating;
+        worker_rating[i] = f.toFixed(2);
 
         //waiting list
     }
@@ -214,14 +215,7 @@
         }
     }
 
-    function calccost(i) {
-        if (car_wash[i]) {
-            cost += 15;
-        }
-        if (tyre_fill[i]) {
-            cost += 5;
-        }
-    }
+  
 
     async function newbooking(i, slotn) {
         //add services to booking table
@@ -315,21 +309,9 @@
         }
     }
 
-    function carwash(temp) {
-        if (temp == true) {
-            cost += 15;
-        }
-    }
-
-    function tyre(temp) {
-        if (temp == true) {
-            cost += 5;
-        }
-    }
     let rating,comment
     async function feed(i,rat,comm,slotn){
 
-        worker_rating[i] = rat
 
         let data = {}
         data['rating'] =rat
@@ -348,19 +330,20 @@
         
             let d = await res.json()
             console.log(d.rating)
-        worker_rating[i] = d.rating
+            let f = parseFloat(d.rating)
+
+        worker_rating[i] = f.toFixed(2);
     }
 
     $:{
         services = services;
         cost = (outtime-intime)*25
-        for(let i = 0;i<services.length;i++){
-            if(services[i]=="Fill Tyres"){
-                cost += 5
-            }
-            else if(services[i]=="Car Wash"){
-                cost += 15
-            }
+        console.log(outtime)
+        console.log(intime)
+        console.log(outtime-intime)
+        console.log((outtime-intime)*25)
+        console.log(cost)
+      
 
 
         for(let i =0;i<car_wash.length;i++){
@@ -377,7 +360,6 @@
         }
 
       
-        }
     }
     
 

@@ -29,7 +29,11 @@
             DropdownItem,
         } from "sveltestrap";
     import { prevent_default } from "svelte/internal";
-     
+
+        let UserRows = [];
+        let WorkerRows = [];
+
+
         let isOpen = false;
         let u = false;
         let disp = false;
@@ -43,7 +47,7 @@
             isOpen = event.detail.isOpen;
         }
      
-        function deletefooter1() {
+        async function deletefooter1() {
             f1 = false;
             f2 = false;
             f3 = true;
@@ -51,6 +55,24 @@
             disp = false;
             disp1 = false;
             deluser = false;
+
+            const s = "http://localhost:8080/users" 
+     
+            let res = await fetch(s, {
+     
+                method: "GET",
+                headers : {
+                    "Content-type": "application/json",
+                    "Accept" : "application/json",
+                    "Access-Control-Allow-Origin": "http://localhost:8080"
+                }
+            })
+
+            UserRows = await res.json()
+                        console.log(UserRows);
+
+
+
             document.getElementById("myTable").deleteTFoot();
         }
      
@@ -190,30 +212,8 @@
         }
         // whichcheck() checks which one is true and accordingly returns the key that has the status as true in finalcheckid
      
-        const UserRows = [
-            {
-                id: "123",
-                first: "Arki",
-                last: "Ghosh",
-                add: "BITS",
-                email: "arkighosh0807@gmail.com",
-                phone: "9898989989",
-                car: "HR17nasjacndja",
-                wallet: "500",
-            },
-        ];
+        
      
-        let WorkerRows = [
-            {
-                id: "459",
-                name: "Ram Prakash",
-                space: "A",
-                slot: "3 to 4",
-                hours: "20",
-                rating: "4.7",
-            },
-        ];
-
         async function del(id){
             let s = "http://localhost:8080/remove_worker/" + id;
      
@@ -229,6 +229,29 @@
 
 
         }
+
+
+        async function delu(id){
+            console.log(id)
+
+            
+            let s = "http://localhost:8080/remove_user/"+id;
+     
+            fetch(s, {
+     
+                method: "DELETE",
+                headers : {
+                    "Content-type": "application/json",
+                    "Accept" : "application/json",
+                    "Access-Control-Allow-Origin": "http://localhost:8080"
+                }
+            })
+
+            
+        }
+
+
+
 
 
     </script>
@@ -364,33 +387,34 @@
                 style="color:lawngreen;"
                 id="myTable"
             >
-                <Column header="#" width="2rem">
-                    <input type="radio" id={row.id} on:click|preventDefault = {checking}/>
-                    <!-- checking whether the button is selected -->
-                </Column>
+                 
                 <Column header="ID" width="8rem">
                     {row.id}
                 </Column>
                 <Column header="First Name" width="8rem">
-                    {row.first}
+                    {row.firstname}
                 </Column>
                 <Column header="Last Name" width="8rem">
-                    {row.last}
+                    {row.lastname}
                 </Column>
                 <Column header="Address" width="8rem">
-                    {row.add}
+                    {row.address}
                 </Column>
                 <Column header="Email">
                     {row.email}
                 </Column>
                 <Column header="Phone Number" width="8rem">
-                    {row.phone}
+                    {row.number}
                 </Column>
                 <Column header="Car Registration Number" width="8rem">
-                    {row.car}
+                    {row.crn}
                 </Column>
                 <Column header="Balance" width="8rem">
-                    {row.wallet}
+                    {row.balance}
+                </Column>
+                <Column header="#" width="2rem">
+                    <Button on:click={()=>delu(row.id)}>X</Button>
+                    <!--  -->
                 </Column>
             </Table>
         </div>
@@ -418,10 +442,7 @@
                 style="color:lawngreen;"
                 id="myTable1"
             >
-                <Column header="#" width="2rem">
-                    <Button on:click={()=>del(row.id)}>X</Button>
-                    <!--  -->
-                </Column>
+                
                 <Column header="ID" width="8rem">
                     {row.id}
                 </Column>
@@ -435,12 +456,15 @@
                     {row.slot}
                 </Column>
                 <Column header="Hours Worked" width="8rem">
-                    {row.hours}
+                    {row.hours_worked}
                 </Column>
                 <Column header="Rating" width="8rem">
-                    {row.rating}
+                    {row.avg_rating}
                 </Column>
-                
+                <Column header="#" width="2rem">
+                    <Button on:click={()=>del(row.id)}>X</Button>
+                    <!--  -->
+                </Column>
             </Table>
         </div>
         <br />

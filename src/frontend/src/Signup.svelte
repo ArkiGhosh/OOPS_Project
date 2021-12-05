@@ -1,6 +1,7 @@
    
  <script>
         import { Router, navigate } from "svelte-navigator";
+import { Button } from "sveltestrap";
         let flag = false;
         let user_email;
         let otp;
@@ -103,6 +104,8 @@
             
         }
         
+        let gotologin = false;
+
         async function verify(e) {
 
             console.log(otp["otp"]);
@@ -120,7 +123,7 @@
                 },
                     });
 
-            
+                gotologin = true
                 
                 var msg = document.createElement("P");
                 msg.innerHTML = "Registered successfully";
@@ -131,6 +134,9 @@
                 msg.innerHTML = "Incorrect OTP, please try again";
                 document.getElementById("verification").appendChild(msg);
             }
+
+
+
         }
     </script>
      
@@ -261,6 +267,9 @@
                     <div class="submitotp">
                         <button type="submit" class="submito"><b>Verify</b></button>
                     </div>
+                    {#if gotologin}
+                        <a href="/">Login</a>
+                    {/if}
                 </div>
             </div>
         </form>

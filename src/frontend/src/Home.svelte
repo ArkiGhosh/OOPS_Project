@@ -31,6 +31,8 @@
 
     let incorrect = false;
 
+    let error = false
+
     async function getUsersO(){
 
         const res = await fetch("http://localhost:8080/users",
@@ -48,13 +50,22 @@
 
         const users = await res.json()
 
-        
+
+
+
         for (let i = 0;i<users.length;i++){
             if(users[i]["email"] == email){
+
+                if(users[i]["active"]){
+
 
                 userName.set(users[i]["username"])
                 userId.set(users[i]["id"])
                 nav2();
+                }
+                else{
+                    error = true
+                }
 
             }
            
@@ -85,10 +96,14 @@
         
         for (let i = 0;i<users.length;i++){
             if(users[i]["username"]==username && users[i]["password"]==password){
-
+                if(users[i]["active"]){
                 $userName = users[i]["username"]
                 $userId  = users[i]["id"]
                 nav2();
+                }
+                else{
+                    error = true;
+                }
             }
 
         }
@@ -156,7 +171,6 @@
 
 
 <p align = "right"><button class = "sub" on:click = {nav1}>Sign Up</button>
-    <button class="sub" on:click={nav2}>User</button>
 </p>
 
 <div class = "login">
@@ -197,6 +211,10 @@
 
                 {#if incorrect==true}
                     <p style="color:red">Incorrect Username or Password</p>
+                {/if}
+                {#if error}
+                    
+                    <p style="color:red">Email not verified</p>
                 {/if}
 
         </div>
