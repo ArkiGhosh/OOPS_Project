@@ -121,6 +121,7 @@ public class WorkerController {
     return usersList;
     }
 
+
      @CrossOrigin
     @PostMapping("/feedback/{slot}")
     public String get_feedback(@RequestBody Feedback feedback,@PathVariable String slot)
@@ -154,6 +155,10 @@ public class WorkerController {
 
                 return "{ \"rating\":"+worker.getAvg_rating()+"}";
     }
+
+
+
+
 
 /*
     @PostMapping("/feedback/{id}")

@@ -135,8 +135,8 @@
         
         for (let i = 0;i<admins.length;i++){
             if(admins[i]["username"]==username && admins[i]["password"]==password){
-                $userName = users[i]["username"]
-                $userId  = users[i]["id"]
+                $userName = admins[i]["username"]
+                $userId  = admins[i]["id"]
                 nav3();
             }
 

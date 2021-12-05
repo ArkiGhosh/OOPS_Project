@@ -359,6 +359,27 @@
       
     }
     
+
+    
+    let checker = false;
+ 
+    console.log($userName);
+    async function func_check(){
+        const res = await fetch(s, {
+            method: "GET",
+            headers: {
+                "Content-type": "application/json",
+                Accept: "application/json",
+                "Access-Control-Allow-Origin": "http://localhost:8080",
+            },
+        });
+ 
+        const proceed = await res.json();
+        console.log(proceed);
+        if (proceed["success"] == true){
+            checker = true;
+        }
+    }
  
     console.log($userName);
 </script>
@@ -567,6 +588,23 @@
                                                     newbooking(i, a.slotnum);
                                                 }}>Pay</Button
                                             >
+                                            
+                                            <Button 
+                                                style = "background-color:#333;color:white"
+                                                on:click={() => {
+                                                    func_check();
+                                                }}>Apply Prome Code</Button>
+                                            {#if checker == false}
+                                            <p style = "color:#333">You are not eligible for promo code.</p>
+                                            {:else}
+                                            Enter the promo code:<Input type = "text" /> 
+                                            <button style = "background-color:#333;color:lawngreen"
+                                            on:click={() => {
+                                                promochecking();
+                                            }}>Enter</button>
+                                            {/if}
+
+
                                         {:else}
                                             <Alert color="info"
                                                 >Booking Done successfully</Alert

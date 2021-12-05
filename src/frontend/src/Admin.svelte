@@ -28,12 +28,8 @@
             DropdownMenu,
             DropdownItem,
         } from "sveltestrap";
-    import { prevent_default } from "svelte/internal";
-
-        let UserRows = [];
-        let WorkerRows = [];
-
-
+        import { prevent_default } from "svelte/internal";
+     
         let isOpen = false;
         let u = false;
         let disp = false;
@@ -55,24 +51,21 @@
             disp = false;
             disp1 = false;
             deluser = false;
-
-            const s = "http://localhost:8080/users" 
+            deleteslot = false;
+            addslot = false;
      
-            let res = await fetch(s, {
-     
+            const s = "http://localhost:8080/users";
+            const res = await fetch(s, {
                 method: "GET",
-                headers : {
+     
+                headers: {
                     "Content-type": "application/json",
-                    "Accept" : "application/json",
-                    "Access-Control-Allow-Origin": "http://localhost:8080"
-                }
-            })
-
-            UserRows = await res.json()
-                        console.log(UserRows);
-
-
-
+                    Accept: "application/json",
+                    "Access-Control-Allow-Origin": "http://localhost:8080",
+                },
+            });
+     
+            UserRows = await res.json();
             document.getElementById("myTable").deleteTFoot();
         }
      
@@ -84,23 +77,56 @@
             disp = false;
             disp1 = false;
             deluser = false;
-
-
-            const s = "http://localhost:8080/workers" 
+            g1 = false;
+            g2 = false;
+            deleteslot = false;
+            addslot = false;
+     
+            const s = "http://localhost:8080/workers";
      
             let res = await fetch(s, {
-     
                 method: "GET",
-                headers : {
+                headers: {
                     "Content-type": "application/json",
-                    "Accept" : "application/json",
-                    "Access-Control-Allow-Origin": "http://localhost:8080"
-                }
-            })
-
-            WorkerRows = await res.json()
-
+                    "Accept": "application/json",
+                    "Access-Control-Allow-Origin": "http://localhost:8080",
+                },
+            });
+     
+            WorkerRows = await res.json();
+     
             document.getElementById("myTable1").deleteTFoot();
+        }
+     
+        let location, spaces, slotnum;
+     
+        async function spacedata(spc,lc,sl){
+            let body = {
+                id: 1,
+                space_name: spc,
+                location: lc,            
+                slot_num: [sl]
+            };
+     
+            spacesarray.push(body);
+     
+            const s = "http://localhost:8080/add_space";
+     
+            const res = await fetch(s, {
+                method: "POST",
+                headers: {
+                    "Content-type": "application/json",
+                     "Accept": "application/json",
+                    "Access-Control-Allow-Origin": "http://localhost:8080",
+                },
+     
+                body: JSON.stringify(body),
+            });
+     
+            f1 = true;
+            addspace = false;
+            g1 = false;
+            g2 = false;
         }
      
         async function workerdata() {
@@ -116,18 +142,16 @@
      
             const s = "http://localhost:8080/add_worker";
      
-            const res = await fetch( s , {
-     
-                method : "POST",
-                headers : {
+            const res = await fetch(s, {
+                method: "POST",
+                headers: {
                     "Content-type": "application/json",
-                    "Accept" : "application/json",
+                    Accept: "application/json",
                     "Access-Control-Allow-Origin": "http://localhost:8080",
                 },
      
-                body : JSON.stringify(body),
-            }
-            );
+                body: JSON.stringify(body),
+            });
      
             console.log(WorkerRows);
         }
@@ -136,14 +160,15 @@
         let f2 = false;
         let f3 = false;
         let f4 = false;
+        let addspace = false;
         var status;
-        function checking(radioid){
+        function checking(radioid) {
             status = document.getElementById(radioid).checked;
             const body = {
-                id : id,
-                status : status
-            }
-            status_array.push(body)
+                id: id,
+                status: status,
+            };
+            status_array.push(body);
             console.log(status_array);
         }
         // checks whether the radio button is selected or not. If selected, returns true to status
@@ -153,87 +178,188 @@
         const status_array = [
             {
                 id: "459",
-                status: false
-            }
-        ]
-     
-        let arr1 = [
-            { name: "1" },
-            { name: "2" },
-            { name: "3" },
-            { name: "4" },
-            { name: "5" },
+                status: false,
+            },
         ];
-        let brr1 = [false, false, false];
-     
-        let arr2 = [{ name: "Slot 1" }, { name: "Slot 2" }, { name: "Slot 3" }];
-        let brr2 = [false, false, false];
-     
-        let arr3 = [{ name: "Car 1" }, { name: "Car 2" }, { name: "Car 3" }];
-        let brr3 = [false, false, false];
-     
-        let arr4 = [
-            { name: "Worker 1" },
-            { name: "Worker 2" },
-            { name: "Worker 3" },
-        ];
-        let brr4 = [false, false, false];
      
         let id, workername, space, slot;
      
         let finalcheckid;
      
-        async function whichcheck(){
-            for(let i = 0; i < status_array.length; i++){
-                if (status_array[i].status == true){
-                    finalcheckid = status_array[i].id
-                };
+        async function whichcheck() {
+            for (let i = 0; i < status_array.length; i++) {
+                if (status_array[i].status == true) {
+                    finalcheckid = status_array[i].id;
+                }
             }
      
             const s = "http://localhost:8080/remove_worker/" + finalcheckid;
      
             fetch(s, {
-     
                 method: "DELETE",
-                headers : {
+                headers: {
                     "Content-type": "application/json",
-                    "Accept" : "application/json",
-                    "Access-Control-Allow-Origin": "http://localhost:8080"
-                }
-            })
-            
+                    Accept: "application/json",
+                    "Access-Control-Allow-Origin": "http://localhost:8080",
+                },
+            });
+     
             disp1 = true;
             disp = false;
-            console.log(finalcheckid)
-            
-            
-     
-     
+            console.log(finalcheckid);
         }
         // whichcheck() checks which one is true and accordingly returns the key that has the status as true in finalcheckid
      
-        
+        let UserRows = [
+            {
+                id: "123",
+                first: "Arki",
+                last: "Ghosh",
+                add: "BITS",
+                email: "arkighosh0807@gmail.com",
+                phone: "9898989989",
+                car: "HR17nasjacndja",
+                wallet: "500",
+            },
+        ];
      
-        async function del(id){
+        let WorkerRows = [
+            {
+                id: "459",
+                name: "Ram Prakash",
+                space: "A",
+                slot: "3 to 4",
+                hours: "20",
+                rating: "4.7",
+            },
+        ];
+     
+        async function del(id) {
             let s = "http://localhost:8080/remove_worker/" + id;
      
             fetch(s, {
-     
                 method: "DELETE",
-                headers : {
+                headers: {
                     "Content-type": "application/json",
-                    "Accept" : "application/json",
-                    "Access-Control-Allow-Origin": "http://localhost:8080"
-                }
-            })
+                    Accept: "application/json",
+                    "Access-Control-Allow-Origin": "http://localhost:8080",
+                },
+            });
+        }
+     
+     
+        async function managespaces() {
+            f1 = true;
+            f2 = false;
+            f3 = false;
+            f4 = false;
+            disp = false;
+            disp1 = false;
+            deluser = false;
+            g1 = false;
+            g2 = false;
+            deleteslot = false;
+            addslot = false;
+
+
+
+
+            const s = "http://localhost:8080/spaces";
+     
+            let res = await fetch(s, {
+                method: "GET",
+                headers: {
+                    "Content-type": "application/json",
+                    "Accept": "application/json",
+                    "Access-Control-Allow-Origin": "http://localhost:8080",
+                },
+            });
+     
+            spacesarray = await res.json();
+            
+
+     
+     
+        }
+     
+        let spacesarray = []
+        
+        let g1 = false;
+        async function slotfunc(){
+            let body = {
+                id: 1,
+                // location: location,
+                space: spaces,
+                slotnum: slotnum
+            };
+            spacesarray.push(body);
+            addslot = false;
+            g1 = true;
+            f2 = false;
+
+           const s = "http://localhost:8080/add_slot/"+spaces+"/"+slotnum;
+     
+            let res = await fetch(s, {
+                method: "GET",
+                headers: {
+                    "Content-type": "application/json",
+                    "Accept": "application/json",
+                    "Access-Control-Allow-Origin": "http://localhost:8080",
+                },
+            }); 
 
 
         }
+     
+        async function slotdelete(){
+            let body = {
+                id: 2,
+                // loaction: location
+                space: spaces,
+                slotnum
+            }
+            spacesarray.pop(body);
+            deleteslot = false;
+            g2 = true;
+            f2 = false;
+
+
+            spacesarray.push(body);
+            addslot = false;
+            g1 = true;
+            f2 = false;
+
+           const s = "http://localhost:8080/add_slot/"+spaces+"/"+slotnum;
+     
+            let res = await fetch(s, {
+                method: "GET",
+                headers: {
+                    "Content-type": "application/json",
+                    "Accept": "application/json",
+                    "Access-Control-Allow-Origin": "http://localhost:8080",
+                },
+            });
+
+     
+        }
+        let addslot = false;
+        let g2 = false;
+     
+        function activate(){
+            addslot = true;
+            deleteslot = false;
+        }
+     
+        let deleteslot = false;
+        function deactivate(){
+            deleteslot = true;
+            addslot = false;
+        }
+
 
 
         async function delu(id){
             console.log(id)
-
             
             let s = "http://localhost:8080/remove_user/"+id;
      
@@ -246,15 +372,13 @@
                     "Access-Control-Allow-Origin": "http://localhost:8080"
                 }
             })
-
             
         }
 
 
-
-
-
     </script>
+     
+     
      
     <div class="hello">
         <Navbar class="rounded-3" color="dark" dark expand="md">
@@ -291,13 +415,9 @@
                             >GitHub</NavLink
                         >
                     </NavItem>
-                    <Dropdown nav inNavbar>
-                        <DropdownToggle nav caret>Options</DropdownToggle>
-                        <DropdownMenu end>
-                            <DropdownItem>Profile</DropdownItem>
-                            <DropdownItem>Log Out</DropdownItem>
-                        </DropdownMenu>
-                    </Dropdown>
+                    <NavItem>
+                        <NavLink href="/">LogOut</NavLink>
+                    </NavItem>
                 </Nav>
             </Collapse>
         </Navbar>
@@ -315,15 +435,7 @@
                 >
                     <button
                         class="one"
-                        on:click={function () {
-                            f1 = true;
-                            f2 = false;
-                            f3 = false;
-                            f4 = false;
-                            disp = false;
-                            disp1 = false;
-                            deluser = false;
-                        }}>Manage Parking Spaces</button
+                        on:click|preventDefault = {managespaces}>Manage Parking Spaces</button
                     >
                 </Card>
             </Col>
@@ -343,6 +455,10 @@
                             disp = false;
                             disp1 = false;
                             deluser = false;
+                            g1 = false;
+                            g2 = false;
+                            deleteslot = false;
+                            addslot = false;
                         }}>Manage Parking Slots</button
                     >
                 </Card>
@@ -380,7 +496,7 @@
             class="one"
             style="border-radius:5px !important; width: 60rem; align-self: center;"
         >
-            <Table
+           <Table
                 responsive
                 rows={UserRows}
                 let:row
@@ -416,7 +532,7 @@
                     <Button on:click={()=>delu(row.id)}>X</Button>
                     <!--  -->
                 </Column>
-            </Table>
+            </Table> 
         </div>
         <br />
         <button
@@ -456,13 +572,13 @@
                     {row.slot}
                 </Column>
                 <Column header="Hours Worked" width="8rem">
-                    {row.hours_worked}
+                    {row.hours}
                 </Column>
                 <Column header="Rating" width="8rem">
-                    {row.avg_rating}
+                    {row.rating}
                 </Column>
                 <Column header="#" width="2rem">
-                    <Button on:click={()=>del(row.id)}>X</Button>
+                    <Button on:click={() => del(row.id)}>X</Button>
                     <!--  -->
                 </Column>
             </Table>
@@ -491,7 +607,7 @@
             >
                 Enter ID: <Input
                     type="text"
-                    value = {finalcheckid}              
+                    value={finalcheckid}
                     style="width:14rem; align-self:center"
                 />
                 <!-- the value of finalcheckid should be the default value of this f -->
@@ -502,7 +618,7 @@
                 >
             </div>
         </form>
-        <br>
+        <br />
     {/if}
      
     {#if disp == true}
@@ -541,22 +657,34 @@
     {/if}
      
     {#if f2 == true}
-        {#each arr2 as { name }, i}
-            <div class="box">
-                <Card style="background-color: #333">
-                    <a
-                        href="#"
-                        on:click={function () {
-                            brr2[i] = true;
-                        }}><h3>{name}</h3></a
+    <br>
+    <div style = "align-items:center;align-self:center">
+    <Container>
+        <Row cols={2}>
+            <Col>
+                <Card
+                    style="background-color:#333;color:lawngreen;border-color:#333;width:15rem;margin-right:5px"
+                >
+                    <button
+                        class="one"
+                        on:click|preventDefault = {activate}>Add Slot</button
                     >
-                    {#if brr2[i] == true}
-                        <h4>10am - 12pm</h4>
-                    {/if}
                 </Card>
-            </div>
-            <br />
-        {/each}
+            </Col>
+            <br /><br />
+     
+            <Col>
+                <Card
+                    style="background-color:#333;color:lawngreen;border-color:#333;width:15rem;margin-right:5px"
+                >
+                    <button class="one" on:click|preventDefault={deactivate}
+                        >Delete Slot</button
+                    >
+                </Card>
+            </Col>
+        </Row>
+    </Container>
+    </div>
     {/if}
      
     {#if deluser == true}
@@ -577,31 +705,150 @@
                 >
             </div>
         </form>
-        <br>
+        <br />
     {/if}
      
     {#if f1 == true}
-        {#each arr3 as { name }, i}
-            <div class="box">
-                <a
-                    href="#"
-                    on:click={function () {
-                        brr3[i] = true;
-                    }}><h3>{name}</h3></a
+    <h4 align="center" style="color:#333 !important"><b>Parking Spaces</b></h4>
+    <br />
+    <div
+        class="one"
+        style="border-radius:5px !important; width: 60rem; align-self: center;"
+    >
+        <Table
+            responsive
+            rows={spacesarray}
+            let:row
+            style="color:lawngreen;"
+            id="myTable1"
+        >
+            <Column header="#" width="2rem">
+                <Button on:click={() => del(row.id)}>X</Button>
+                <!--  -->
+            </Column>
+            <Column header="ID" width="8rem">
+                {row.id}
+            </Column>
+            <!-- <Column header="Location" width="8rem">
+                {row.location}
+            </Column> -->
+            <Column header="Space" width="8rem">
+                {row.space_name}
+            </Column>
+            <Column header="Slot" width="8rem">
+                {row.slot_num}
+            </Column>
+        </Table>
+    </div>
+    <br />
+    <button
+        style="color:lawngreen;background-color:#333;border-color:#333;width:8rem; align-self:center;"
+        on:click={function () {
+            disp = false;
+            disp1 = false;
+            f1 = false;
+            addspace = true;
+        }}>Add Space</button
+    >
+    {/if}
+     
+    {#if addslot == true}
+    <br />
+    <form>
+        <div
+            class="box"
+            style="background-color:#333;border-color:#333;border-radius:5px;width:400px;display:flex;padding:10px"
+        >
+            <!-- Location: <Input
+                type="text"
+                bind:value={location}
+                style="width:14rem; align-self:center"
+            /><br /> -->
+            Space: <Input
+                type="text"
+                bind:value={spaces}
+                style="width:14rem; align-self:center"
+            /><br />
+            Slot: <Input
+                type="text"
+                bind:value={slotnum}
+                style="width:14rem; align-self:center"
+            /><br />
+            <button
+                style="align-self:center;width:8rem;align-text:center;color:#333;background-color:lawngreen;border-color:lawngreen"
+                on:click|preventDefault={slotfunc}>Add</button
+            >
+        </div>
+    </form>
+    {/if}
+     
+     
+    {#if deleteslot == true}
+    <br />
+    <form>
+        <div
+            class="box"
+            style="background-color:#333;border-color:#333;border-radius:5px;width:400px;display:flex;padding:10px"
+        >
+            <!-- Location: <Input
+                type="text"
+                bind:value={location}
+                style="width:14rem; align-self:center"
+            /><br /> -->
+            Space: <Input
+                type="text"
+                bind:value={spaces}
+                style="width:14rem; align-self:center"
+            /><br />
+            Slot: <Input
+                type="text"
+                bind:value={slotnum}
+                style="width:14rem; align-self:center"
+            /><br />
+            <button
+                style="align-self:center;width:8rem;align-text:center;color:#333;background-color:lawngreen;border-color:lawngreen"
+                on:click|preventDefault={slotdelete}>Delete</button
+            >
+        </div>
+    </form>
+    {/if}
+     
+    {#if g1 == true}
+    <h4 style = "color:#333;text-align:center"><b>Slot added successfully</b></h4>
+    {/if}
+     
+    {#if g2 == true}
+    <h4 style = "color:#333;text-align:center"><b>Slot deleted successfully</b></h4>
+    {/if}
+     
+    {#if addspace == true}
+        <br />
+        <form>
+            <div
+                class="box"
+                style="background-color:#333;border-color:#333;border-radius:5px;width:400px;display:flex;padding:10px"
+            >
+                <!-- Location: <Input
+                    type="text"
+                    bind:value={location}
+                    style="width:14rem; align-self:center"
+                /><br /> -->
+                Space: <Input
+                    type="text"
+                    bind:value={spaces}
+                    style="width:14rem; align-self:center"
+                /><br />
+                Slot: <Input
+                    type="text"
+                    bind:value={slotnum}
+                    style="width:14rem; align-self:center"
+                /><br />
+                <button
+                    style="align-self:center;width:8rem;align-text:center;color:#333;background-color:lawngreen;border-color:lawngreen"
+                    on:click|preventDefault={()=>spacedata(spaces,"A",slotnum)}>Add</button
                 >
-                {#if brr3[i] == true}
-                    <h4>Owner Name: Pratyush Gupta</h4>
-                    <h4>Owner Phone Number: 9045217756</h4>
-                    <h4>Name of the Car: Vitara Brezza</h4>
-                    <h4>Car Company: Maruti Suzuki</h4>
-                    <h4>Car Number: DL 4C AA 1207</h4>
-                    <h4>Car Colour: Silver</h4>
-                    <h4>Car in-time: 10:47:55 am</h4>
-                    <h4>Fees Paid: $2.5</h4>
-                    <h4>Fees Due: $5.5</h4>
-                {/if}
             </div>
-        {/each}
+        </form>
     {/if}
      
     <style>
@@ -611,7 +858,7 @@
             text-align: center;
         }
      
-        button{
+        button {
             text-align: center;
         }
         * {

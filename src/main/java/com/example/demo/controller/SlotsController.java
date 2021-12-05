@@ -79,8 +79,8 @@ public class SlotsController
   employeeRepository.deleteById(id);
   return "{ \"success\" : "+ (result ? "true" : "false") +" }";
  }
- */
  
+ */
  /*
  @CrossOrigin 
  @PostMapping("/slots")
@@ -96,7 +96,7 @@ public class SlotsController
 */
 
     @CrossOrigin
-    @PostMapping("/add_slot/{spacename}/{slotnum}")    
+    @GetMapping("/add_slot/{spacename}/{slotnum}")    
     public void add_slots(@PathVariable String spacename,@PathVariable String slotnum)
     {   
     
