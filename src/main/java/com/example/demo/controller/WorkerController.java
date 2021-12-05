@@ -6,8 +6,10 @@ import java.util.Optional;
 import java.util.UUID;
 
 import com.example.demo.model.Feedback;
+import com.example.demo.model.Slots;
 //import com.example.demo.model.Feedback;
 import com.example.demo.model.Worker;
+import com.example.demo.repository.SlotsRepository;
 import com.example.demo.repository.WorkerRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +30,7 @@ public class WorkerController {
 
     
     @Autowired WorkerRepository workerRepository;
+    @Autowired SlotsRepository slotsRepository;
     
     @CrossOrigin
     @PostMapping("/add_worker")   
@@ -37,6 +40,11 @@ public class WorkerController {
        Worker worker = new_worker;    
         worker.setId(UUID.randomUUID().toString());
        workerRepository.save(worker);
+
+        Slots s = slotsRepository.findBySlotnum(worker.getSlot());
+        s.setWorkerid(worker.getId());
+        slotsRepository.save(s);
+
        return "added";
     }
 

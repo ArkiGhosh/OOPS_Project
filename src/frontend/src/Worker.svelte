@@ -1,8 +1,21 @@
     <script>
         import { Router, navigate } from "svelte-navigator";
+        import { Form, FormGroup, FormText, Input, Label } from "sveltestrap";
+        import { Column, Table } from "sveltestrap";
+        import { userName, userId } from "./store";
+        import { Icon, Styles } from "sveltestrap";
+        import { Col, Container, Row } from "sveltestrap";
         import {
-            Label,
-            Input,
+            Button,
+            Card,
+            CardBody,
+            CardFooter,
+            CardHeader,
+            CardSubtitle,
+            CardText,
+            CardTitle,
+        } from "sveltestrap";
+        import {
             Collapse,
             Navbar,
             NavbarToggler,
@@ -15,40 +28,51 @@
             DropdownMenu,
             DropdownItem,
         } from "sveltestrap";
-        import {
-            Button,
-            Card,
-            CardBody,
-            CardFooter,
-            CardHeader,
-            CardSubtitle,
-            CardText,
-            CardTitle,
-        } from "sveltestrap";
-        import { Col, Container, Row } from "sveltestrap";
-        import { Column, Table } from "sveltestrap";
-        import { userName, userId } from "./store";
-     
+        import { ButtonDropdown } from "sveltestrap";
+    
+        
+
+        //Make it on page load
+
+
+
+
+
+
         let isOpen = false;
+     
         function handleUpdate(event) {
             isOpen = event.detail.isOpen;
         }
-        const nav1 = () => {
-            navigate("Userdash");
+     
+        function clear() {
+            document.getElementById("bruh").value = "";
+            f3 = true;
         }
      
+        let f1 = false;
         let f2 = false;
+        let f3 = false;
         let f4 = false;
-        let money = 1000;
-        let amount;
      
-        let bookings = []
-        async function getbookings(){
-            f4 = true;
+        let feedback = [];
+     
+        let bookings = [];
+     
+        async function deletefooter2() {
+            f1 = false;
             f2 = false;
+            f3 = false;
+            f4 = true;
 
 
-            let s = "http://localhost:8080/user/"+$userId
+
+
+
+
+
+
+            let s = "http://localhost:8080/get_worker/"+$userId
             
             let res = await fetch(s, {
      
@@ -63,6 +87,7 @@
 
             let us = await res.json()
             let bid =[]
+            console.log(bid)
             bid = us.bookingids
             for(let i=0;i<bid.length;i++){
 
@@ -90,41 +115,30 @@
 
             console.log(bookings)
 
+
+
+
+
+
+
+
+
+
+
+
+
+
             document.getElementById("myTable1").deleteTFoot();
         }
      
-        async function money_wallet(){
-            f4 = false;
+        async function deletefooter1() {
             f2 = true;
-            
-
-            let s = "http://localhost:8080/user/"+$userId
-            
-            let res = await fetch(s, {
-     
-                method: "GET",
-                headers : {
-                    "Content-type": "application/json",
-                    "Accept" : "application/json",
-                    "Access-Control-Allow-Origin": "http://localhost:8080"
-                }
-            })
-
-
-            let u = await res.json()
-
-            money = u.balance
+            f1 = false;
+            f4 = false;
 
 
 
-
-
-        }
-     
-        async function add_money(){
-            money = money + amount;
-
-            let s = "http://localhost:8080/add_money/"+$userId+"/"+money
+            let s = "http://localhost:8080/get_worker/"+$userId
             
             let res = await fetch(s, {
      
@@ -136,9 +150,30 @@
                 }
             })
 
+
+            let w = await res.json()
+            let coms = w.comments
+            console.log(coms)
             
+
+                for(let i =0;i<coms.length;i++){
+
+                    let temp = {}
+                    temp["feed"] = coms[i]
+                    console.log(temp)
+                        feedback.push(temp)
+
+                }
+
+            console.log(feedback)
+
+
+            document.getElementById("myTable").deleteTFoot();
         }
      
+        const nav1 = () => {
+            navigate("");
+        }
     </script>
      
     <div class="hello">
@@ -176,62 +211,89 @@
                             >GitHub</NavLink
                         >
                     </NavItem>
-                    <Dropdown nav inNavbar>
-                        <DropdownToggle nav caret>Options</DropdownToggle>
-                        <DropdownMenu end>
-                            <DropdownItem
-                                ><a href="/Userdash"
-                                    >Dashboard</a
-                                ></DropdownItem
-                            >
-                            <DropdownItem
-                                ><a href="/"
-                                    >LogOut</a
-                                ></DropdownItem
-                            >
-                        </DropdownMenu>
-                    </Dropdown>
+                        <NavLink href = "/">LogOut</NavLink>
+                        
                 </Nav>
             </Collapse>
         </Navbar>
     </div>
      
     <br />
+    <h2 style="color: #333; align-self:center"><b>Welcome {$userName}!</b></h2>
+    <br />
+     
     <div class="bro">
         <Container>
-            <Row cols={2}>
+            <Row cols={3}>
                 <Col>
                     <Card
                         style="background-color:#333;color:lawngreen;border-color:#333;width:15rem;margin-right:5px;text-align:center"
                     >
-                        <button
+                        <Button
                             style="color:lawngreen;background-color:#333;border-color:#333"
-                            on:click|preventDefault = {getbookings}
+                            on:click={function () {
+                                f1 = true;
+                                f2 = false;
+                                f4 = false;
+                            }}
                         >
-                            Your Bookings
-                        </button>
+                            Available Services
+                        </Button>
+                        {#if f1 == true}
+                            <p>Dry Cleaning $5</p>
+                            <p>Car Washing $5</p>
+                            <p>Tyre Fill $5</p>
+                        {/if}
                     </Card>
                 </Col>
                 <br />
      
                 <Col>
                     <Card
-                        style="background-color:#333;color:lawngreen;border-color:#333;width:15rem;margin-right:5px;text-align:center"
+                        style="background-color:#333;color:lawngreen;border-color:#333;width:15rem;margin-right:5px"
                     >
                         <button
                             style="color:lawngreen;background-color:#333;border-color:#333"
-                            on:click|preventDefault = {money_wallet}
-                            >Recharge Wallet</button
+                            on:click|preventDefault={deletefooter2}>Bookings</button
+                        >
+                    </Card>
+                </Col>
+     
+                <Col>
+                    <Card
+                        style="background-color:#333;color:lawngreen;border-color:#333;width:15rem;margin-right:5px"
+                    >
+                        <button
+                            style="color:lawngreen;background-color:#333;border-color:#333"
+                            on:click|preventDefault={deletefooter1}>User feedback</button
                         >
                     </Card>
                 </Col>
             </Row>
         </Container>
     </div>
+    <br /><br />
      
-    <!-- bookings table -->
+    {#if f2 == true}
+        <div
+            class="one"
+            style="border-radius:5px !important; width: 60rem; align-self: center;"
+        >
+            <Table
+                responsive
+                rows={feedback}
+                let:row
+                style="color:lawngreen;"
+                id="myTable"
+            >
+                <Column header="Feedback" width="8rem">
+                    {row.feed}
+                </Column>
+            </Table>
+        </div>
+    {/if}
+     
     {#if f4 == true}
-        <br>
         <h4 align="center" style="color:#333 !important"><b>All bookings</b></h4>
         <br />
         <div
@@ -245,11 +307,8 @@
                 style="color:lawngreen;"
                 id="myTable1"
             >
-                <Column header="Slot ID" width="8rem">
+                <Column header="Slot" width="8rem">
                     {row.slotid}
-                </Column>
-                <Column header="Space" width="8rem">
-                    {row.space}
                 </Column>
                 <Column header="In time" width="8rem">
                     {row.intime}
@@ -257,8 +316,8 @@
                 <Column header="Out time" width="8rem">
                     {row.outtime}
                 </Column>
-                <Column header="Date" width="8rem">
-                    {row.date}
+                <Column header="Cost" width="8rem">
+                    {row.cost}
                 </Column>
                 <Column header="Services" width="8rem">
                     {row.services}
@@ -268,19 +327,13 @@
         <br />
     {/if}
      
-    {#if f2 == true}
-    <br>
-    <h4 align-self = "center" style = "color:#333;text-align:center"><b>Current balance: Rs. {money}</b></h4>
-    <br>
-    <div class = "box" style="background-color: #333 !important;">
-        <Label>Enter amount</Label>
-        <input type = "number" bind:value={amount}/>
-        <button on:click|preventDefault = {add_money} style = "background-color:lawngreen; border-color:lawngreen; color: #333;">Add money</button>
-    </div>
-    {/if}
-     
     <style>
         p {
+            text-align: center;
+        }
+        .box {
+            align-self: center;
+            color: lawngreen;
             text-align: center;
         }
      
@@ -358,10 +411,9 @@
      
         .bro {
             align-self: center;
-            text-align: center;
         }
      
         p {
             color: lawngreen;
         }
-    </style>  
+    </style>

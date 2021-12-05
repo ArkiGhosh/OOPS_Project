@@ -6,6 +6,7 @@
 	import {Router, Route} from "svelte-navigator";
 import Profile from "./Profile.svelte";
 import Admin from "./Admin.svelte";
+import Worker from "./Worker.svelte";
 </script>
 
 <Router>
@@ -17,6 +18,7 @@ import Admin from "./Admin.svelte";
 	<Route path = "/Userdash"><Userdash /></Route>
 	<Route path = "/Profile"><Profile /></Route>
 	<Route path = "/Admin"><Admin/> </Route>
+	<Route path = "/Worker"><Worker/> </Route>
 
 </main>
 </Router>

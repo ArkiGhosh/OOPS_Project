@@ -8,7 +8,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.cassandra.core.CassandraOperations;
 import org.springframework.web.bind.annotation.*;
 import com.example.demo.model.Slots;
+import com.example.demo.model.Spaces;
 import com.example.demo.repository.SlotsRepository;
+import com.example.demo.repository.SpacesRepository;
+
 import java.util.UUID;
 
  
@@ -18,12 +21,8 @@ import java.util.UUID;
 public class SlotsController
 {
 
- @Autowired
- SlotsRepository slotsRepository;
-
-
-@Autowired
-private CassandraOperations cassandraOperations;
+ @Autowired SlotsRepository slotsRepository;
+ @Autowired SpacesRepository spacesRepository;
 
 
  
@@ -81,20 +80,50 @@ private CassandraOperations cassandraOperations;
   return "{ \"success\" : "+ (result ? "true" : "false") +" }";
  }
  */
-@CrossOrigin 
+ 
+ /*
+ @CrossOrigin 
  @PostMapping("/slots")
  public Slots addSlots(@RequestBody Slots newSlot)
  {
   //String id = String.valueOf(new Random().nextInt());
   String id = UUID.randomUUID().toString();
   Slots emp = new Slots(id, newSlot.getSlotnum(), newSlot.getSpace(),newSlot.getWorkerid());
-
-
-
-
   slotsRepository.save(emp);
 
   return emp;
  }
+*/
+
+    @CrossOrigin
+    @PostMapping("/add_slot/{spacename}/{slotnum}")    
+    public void add_slots(@PathVariable String spacename,@PathVariable String slotnum)
+    {   
+    
+        Slots slot = new Slots();
+        slot.setId(UUID.randomUUID().toString());
+        slot.setSlotnum(slotnum);
+        slot.setSpace(spacename);
+        slotsRepository.save(slot);
+
+        
+        Iterable<Spaces> all_spaces = spacesRepository.findAll();
+        
+        all_spaces.forEach( space->
+            {
+                if (space.getSpace_name()==spacename)
+                {
+                    List<String> li = new ArrayList<String>();
+
+                    if (space.getSlot_num()!=null)
+                        li = space.getSlot_num();
+                    li.add(slotnum);
+
+                    space.setSlot_num(li);
+                    spacesRepository.save(space);
+                }
+            }
+        );
+    }
 
 }

@@ -15,6 +15,10 @@
     const nav3 = () =>{
         navigate("Admin");
     }
+    const nav4 = () =>{
+        navigate("Worker");
+    }
+    
 
     let data;
     function postlogin(e){
@@ -131,6 +135,8 @@
         
         for (let i = 0;i<admins.length;i++){
             if(admins[i]["username"]==username && admins[i]["password"]==password){
+                $userName = users[i]["username"]
+                $userId  = users[i]["id"]
                 nav3();
             }
 
@@ -139,7 +145,36 @@
         incorrect = true;
     }
 
+    async function getWorker(){
 
+        const res = await fetch("http://localhost:8080/workers",
+        
+            {
+                method: "GET",
+                headers: {
+                    "Content-type": "application/json",
+                    "Accept": "application/json",
+                    "Access-Control-Allow-Origin": "http://localhost:8080",
+                },
+            }
+        )
+
+
+
+        const admins = await res.json()
+
+        console.log(admins)
+        for (let i = 0;i<admins.length;i++){
+            if(admins[i]["name"]==username && admins[i]["slot"]==password){
+                $userName = admins[i]["name"]
+                $userId  = admins[i]["id"]
+                nav4();
+            }
+
+        }
+      
+        incorrect = true;
+    }
 
 
     function login(){
@@ -155,7 +190,7 @@
             getAdmin();
         }
         else{
-
+            getWorker();
         }
 
     }

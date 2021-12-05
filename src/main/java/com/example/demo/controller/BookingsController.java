@@ -37,14 +37,18 @@ private CassandraOperations cassandraOperations;
  }
 
 
- /*
+
+
+
+ 
+ @CrossOrigin
  @GetMapping("/bookings/{id}")
  public Optional<Bookings> getEmployee(@PathVariable String id)
  {
   Optional<Bookings> emp = bookingsRepository.findById(id);
   return emp;
  }
- */
+ 
 
  @CrossOrigin
  @GetMapping("/bookings/update/{id}/{user}")

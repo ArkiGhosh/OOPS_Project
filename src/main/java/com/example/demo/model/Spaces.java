@@ -1,4 +1,6 @@
 package com.example.demo.model;
+import java.util.List;
+
 import org.springframework.data.cassandra.core.mapping.PrimaryKey;
 import org.springframework.data.cassandra.core.mapping.Table;
 import lombok.AllArgsConstructor;
@@ -7,18 +9,13 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.Setter;
 
-import java.util.List;
-import java.util.UUID;
 @NoArgsConstructor
 
-
-
 @Table @Getter @Setter
-public class Slots {
+public class Spaces {
  @PrimaryKey 
- private @NonNull String id;
- private @NonNull String slotnum;
- private @NonNull String space;
- private String workerid;
-
+ private String id;
+ private String space_name;
+ private String location;
+ private List<String> slot_num;
 }

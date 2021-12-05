@@ -104,12 +104,13 @@ public class UserController
     }
 
     @CrossOrigin
-    @PostMapping("/add_money/{user_id}/{amount}")
+    @GetMapping("/add_money/{user_id}/{amount}")
     public void add_money(@PathVariable String user_id, @PathVariable float amount)
     {
         Optional<User> optionaluser = userRepository.findById(user_id);
         User user = optionaluser.get();
         user.setBalance(amount);
+        userRepository.save(user);
     }
 
     
