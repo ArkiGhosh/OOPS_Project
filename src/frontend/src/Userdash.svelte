@@ -37,6 +37,7 @@
         DropdownItem,
     } from "sveltestrap";
     import { bind, each, fix_and_outro_and_destroy_block, space } from "svelte/internal";
+    import Profile from "./Profile.svelte";
  
     let isOpen = false;
  
@@ -52,6 +53,7 @@
     //Dec 3
     let bookings;
  
+    let discount = 0
     let loc;
     let date, intime, outtime;
     let cost;
@@ -79,7 +81,7 @@
         //add booking to user collumn
         //make a user waiting column?
  
-        let s = "http://localhost:8080/slots";
+        let s = "http://localhost:8080/slots/space/"+loc;
  
         const res = await fetch(s, {
             method: "GET",
@@ -159,9 +161,9 @@
  
         console.log(wor);
  
+        let f = parseFloat(wor.avg_rating) 
         worker_name[i] = wor.name;
-        worker_rating[i] = wor.avg_rating;
- 
+        worker_rating[i] = f.toFixed(2);
         //waiting list
     }
  
@@ -220,7 +222,7 @@
         //add booking id to user and worker table
         //check if balance is enough
         let ser = [];
-        let cosst = 25 * (outtime - intime);
+        let cosst = 25 * (outtime - intime)-discount;
         if (dry_clean[i]) {
             ser.push("Dry Clean");
         }
@@ -329,7 +331,8 @@
         
             let d = await res.json()
             console.log(d.rating)
-        worker_rating[i] = d.rating
+            let f = parseFloat(d.rating)
+            worker_rating[i] = f.toFixed(2);
     }
  
     $:{
@@ -361,11 +364,15 @@
     
 
     
-    let checker = false;
- 
+    let checker = "";
+    let entered_promocode = ""
+    let correct_promo = ""
+    let mailed_promo
     console.log($userName);
     async function func_check(){
-        const res = await fetch(s, {
+    
+        let s = "http://localhost:8080/check_frequent/"+$userId
+        let res = await fetch(s, {
             method: "GET",
             headers: {
                 "Content-type": "application/json",
@@ -376,9 +383,27 @@
  
         const proceed = await res.json();
         console.log(proceed);
-        if (proceed["success"] == true){
-            checker = true;
+        
+        if (proceed["success"] != "FREQ_"){
+            checker = "true"
+            mailed_promo = proceed["success"];
         }
+        else{
+            checker= "false"
+        }
+        console.log(checker);
+    }
+
+
+
+    async function promochecking(){
+
+        if(entered_promocode == mailed_promo){
+            correct_promo = "yes"
+            discount = 5
+        }
+        else correct_promo = "no"
+
     }
  
     console.log($userName);
@@ -529,7 +554,7 @@
  
                             {#if bools[i]}
                                 <h4 style="margin-top: 2em;">
-                                    Cost = {cost}Rs.
+                                    Cost = {cost-discount}Rs.
                                 </h4>
  
                                 <p>Maxtime = {outtime - intime}</p>
@@ -594,14 +619,22 @@
                                                 on:click={() => {
                                                     func_check();
                                                 }}>Apply Prome Code</Button>
-                                            {#if checker == false}
+                                            {#if checker == "false"}
                                             <p style = "color:#333">You are not eligible for promo code.</p>
-                                            {:else}
-                                            Enter the promo code:<Input type = "text" /> 
+                                            {:else if checker=="true"}
+                                            Enter the promo code:<Input type = "text" bind:value={entered_promocode} /> 
                                             <button style = "background-color:#333;color:lawngreen"
                                             on:click={() => {
                                                 promochecking();
                                             }}>Enter</button>
+
+                                            {#if correct_promo=="yes"}
+                                                <Alert color ="success" dissmissable>5 Rs. Discount awarded !!</Alert>
+                                            {:else if correct_promo=="no"}
+
+                                                <Alert color ="danger" dissmissable>Incorrect promo code</Alert>
+                                            {/if}
+
                                             {/if}
 
 
