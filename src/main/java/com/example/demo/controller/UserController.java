@@ -1,14 +1,14 @@
 package com.example.demo.controller;
-
+    
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
 import java.util.UUID;
-
+    
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-
+    
 //import com.example.demo.model.Feedback;
 //import com.example.demo.model.SlotRequest;
 import com.example.demo.model.Slots;
@@ -17,9 +17,9 @@ import com.example.demo.model.User;
 //import com.example.demo.repository.SlotRepository;
 import com.example.demo.repository.UserRepository;
 //import com.example.demo.repository.WorkerRepository;
-
- 
-
+    
+    
+    
 @RestController
 @CrossOrigin
 public class UserController
@@ -27,14 +27,13 @@ public class UserController
     @Autowired SendMail sendMail;
     @Autowired UserRepository userRepository;
 //    @Autowired SlotRepository slotRepository;
- //   @Autowired WorkerRepository workerRepository;
-
-
+    //   @Autowired WorkerRepository workerRepository;
+    
+    
     
     @GetMapping("/users")
     public List<User> getusers()
-    {
-    Iterable<User> result = userRepository.findAll();
+    {    Iterable<User> result = userRepository.findAll();
     List<User> usersList = new ArrayList<User>();
     result.forEach(usersList::add);
     return usersList;
@@ -67,42 +66,22 @@ public class UserController
     return optionaluser;
     }
     
-   
-    @CrossOrigin
-    @DeleteMapping(value="/remove_user/{id}")
-    public void removeUser(@PathVariable String id)
-    {
-        userRepository.deleteById(id);
-
+    @DeleteMapping(value = "/user/{id}", produces = "application/json; charset=utf-8")
+    public String deleteuser(@PathVariable String id) {
+    Boolean result = userRepository.existsById(id);
+    userRepository.deleteById(id);
+    return "{ \"success\" : "+ (result ? "true" : "false") +" }";
     }
-
-
-
+    
     @CrossOrigin 
     @PostMapping("/add_user")
     public User adduser(@RequestBody User newuser)
     {
-  String id = UUID.randomUUID().toString();
-    User user = new User(
-        id, 
-        newuser.getFirstname(), 
-        newuser.getLastname(), 
-        newuser.getUsername(),
-        newuser.getPassword(),
-        newuser.getAddress(),
-        newuser.getEmail(),
-        newuser.getNumber(),
-        newuser.getCrn(),
-        newuser.getBalance(),
-        newuser.getActive(),
-        newuser.getBookingids()
-        );
-
-        userRepository.save(user);
-
-    return user;
+        newuser.setId(UUID.randomUUID().toString());
+        userRepository.save(newuser);
+        return newuser;
     }
-
+    
     @CrossOrigin
     @GetMapping("/add_money/{user_id}/{amount}")
     public void add_money(@PathVariable String user_id, @PathVariable float amount)
@@ -112,8 +91,26 @@ public class UserController
         user.setBalance(amount);
         userRepository.save(user);
     }
-
     
+    @CrossOrigin
+    @GetMapping("/check_frequent/{user_id}")
+    public String check_frequent(@PathVariable String user_id)
+    {
+        String promo = "FREQ_";
+        boolean flag=false;
+        Optional<User> optionaluser = userRepository.findById(user_id);
+        User user = optionaluser.get();
+        
+        List<String> l = user.getBookingids();
+        if (l.size()>5 && (l.size())%5==0)
+        {
+            flag=true;
+            promo = promo + String.valueOf(new Random().nextInt(10000));
+            sendMail.sendPromoCode(promo, user.getEmail());
+        }          
+        System.out.println("{ \"success\" :" +promo+ "}"); 
+        return "{ \"success\" :" +"\""+promo+ "\"" +"}";    
+    }
     
     @CrossOrigin
     @GetMapping("/pay/{id}/{cost}")
@@ -122,7 +119,7 @@ public class UserController
         Optional<User> optionaluser = userRepository.findById(id);
         User user = optionaluser.get();        
         boolean flag=true;
-
+    
         if (cost > user.getBalance())
         {
             flag=false;
@@ -136,45 +133,44 @@ public class UserController
             sendMail.sendPaymentConfirmation(result,user.getEmail()); 
             userRepository.save(user);            
         }
-
-           
+    
+            
         return "{ \"success\" : "+ (flag ? "true" : "false") +" }";
     }
-
-    @CrossOrigin
- @GetMapping("/user/update/{user}/{booking}")
- public Optional<User> updateEmployee(@PathVariable String user, @PathVariable String booking)
- {
-  Optional<User> optionalBoo = userRepository.findById(user);
-  if (optionalBoo.isPresent()) {
-   User woo = optionalBoo.get();
-
     
-
-List<String> li = new ArrayList<String>();
-    if(woo.getBookingids()!=null)
-        li = woo.getBookingids();
+    @CrossOrigin
+    @GetMapping("/user/update/{user}/{booking}")
+    public Optional<User> updateEmployee(@PathVariable String user, @PathVariable String booking)
+    {
+    Optional<User> optionalBoo = userRepository.findById(user);
+    if (optionalBoo.isPresent()) {
+    User woo = optionalBoo.get();
+    
+    List<String> li = woo.getBookingids();
+    
     li.add(booking);
-
-   woo.setBookingids(li);
-
-   userRepository.save(woo);
-  }
-  return optionalBoo;
- } 
-
-
-
-
+    
+    woo.setBookingids(li);
+    
+    userRepository.save(woo);
+    
+    
+    }
+    return optionalBoo;
+    } 
+    
+    
+    
+    
 /*
-  @CrossOrigin
-    @PostMapping("/feedback/{worker_id}")
+    @CrossOrigin
+    @PostMapping("/feedback/{id}")
     public void get_feedback(@RequestBody Feedback feedback,@PathVariable String worker_id)
     {
         Optional<Worker> optionalWorker = workerRepository.findById(worker_id);
         Worker worker = optionalWorker.get();
         int rating = feedback.getRating(); // send -1 if no value is entered
-
+    
         if (rating != -1)
         {
             worker.setNo_of_ratings(worker.getNo_of_ratings()+1);
@@ -182,18 +178,15 @@ List<String> li = new ArrayList<String>();
             worker.setAvg_rating((float)(worker.getTotal_ratings())/worker.getNo_of_ratings());
         }
         
-        String comment = feedback.getComment();
-
-        
-        if (comment!=null)
+        String comment = feedback.getComments();
+        List<String> comments_List = worker.getComments();
+    
+        if (comment != null)
         {
-            List<String> comment_List = worker.getComments();
-            comment_List.add(comment);
-            worker.setComments(comment_List);
+            comments_List.add(comment);
+            worker.setComments(comments_List);
         }
-        
-        workerRepository.save(worker);
     }
-
+    
     */
 }

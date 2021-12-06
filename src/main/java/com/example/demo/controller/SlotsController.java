@@ -35,6 +35,17 @@ public class SlotsController
   return employeesList;
  }
 
+@GetMapping("/slots/space/{space}")
+ public List<Slots> getSlotsbyspace(@PathVariable String space)
+ {
+  Iterable<Slots> result = slotsRepository.findBySpace(space);
+  List<Slots> employeesList = new ArrayList<Slots>();
+  result.forEach(employeesList::add);
+  return employeesList;
+ }
+
+
+
  /*
  @GetMapping("/employee/{id}")
  public Optional<Employee> getEmployee(@PathVariable String id)

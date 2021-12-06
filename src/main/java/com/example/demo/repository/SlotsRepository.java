@@ -13,5 +13,8 @@ public interface SlotsRepository extends CrudRepository<Slots, String> {
     @AllowFiltering
     Slots findBySlotnum(String slotnum);
 
+    @AllowFiltering
+    Iterable<Slots> findBySpace(String space);
+
 
 }

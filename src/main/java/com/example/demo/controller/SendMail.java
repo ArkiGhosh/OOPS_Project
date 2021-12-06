@@ -42,7 +42,7 @@
                 mailMessage.setTo(email);
                 mailMessage.setSubject("Promocode");
                 
-                String message = "Your Promocode is "+". This will expire in 5 mins. Please ignore if not requested.";
+                String message = "Your Promocode is "+promo+". This will expire in 5 mins. Please ignore if not requested.";
                 mailMessage.setText(message);
      
                 sender.send(mailMessage);
