@@ -4,7 +4,7 @@
     let firstname, lastname, email;
     import { GoogleAuth} from '@beyonk/svelte-social-auth'
     import {Router, navigate} from "svelte-navigator"
-    import {userName, userId} from './store'
+    import {userName, userId,spaCes} from './store'
     let username, password,role;
     const nav1 = () => {
         navigate("Signup");
@@ -103,6 +103,22 @@
                 if(users[i]["active"]){
                 $userName = users[i]["username"]
                 $userId  = users[i]["id"]
+                
+                let s = "http://localhost:8080/spaces"
+                let res = await fetch(s, {
+                method: "GET",
+                headers: {
+                    "Content-type": "application/json",
+                    Accept: "application/json",
+                    "Access-Control-Allow-Origin": "http://localhost:8080",
+                    },
+                });
+
+                $spaCes = await res.json()
+                console.log($spaCes)
+
+
+
                 nav2();
                 }
                 else{

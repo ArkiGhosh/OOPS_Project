@@ -10,7 +10,7 @@
         ListGroup,
         ListGroupItem,
     } from "sveltestrap";
-    import { userName, userId } from "./store";
+    import { userName, userId,spaCes } from "./store";
     import { Styles } from "sveltestrap";
     import { Col, Container, Row } from "sveltestrap";
     import {
@@ -494,14 +494,14 @@
             <Label for="#">Location:</Label>
  
             <Input type="select" bind:value={loc} on:click={getspaces}>
-            <!--
-                {#each spaces as spc}
+                {#each $spaCes as spc}
                     
-                    <option value="{spc.space}" > {spc.spc} </option>
+                    <option value="{spc.space}" > {spc.space} </option>
                 {/each}
-            -->
+            <!--
                 <option value="A" selected> A </option>
                 <option value="B"> B </option>
+            -->
             </Input>
         </FormGroup>
         <FormGroup>
