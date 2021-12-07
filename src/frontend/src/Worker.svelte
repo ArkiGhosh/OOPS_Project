@@ -5,6 +5,7 @@
         import { userName, userId } from "./store";
         import { Icon, Styles } from "sveltestrap";
         import { Col, Container, Row } from "sveltestrap";
+        import {onMount} from 'svelte';
         import {
             Button,
             Card,
@@ -59,16 +60,10 @@
      
         let bookings = [];
      
-        async function deletefooter2() {
-            f1 = false;
-            f2 = false;
-            f3 = false;
-            f4 = true;
+        
+        onMount(
 
-
-
-
-
+            async () =>{
 
 
 
@@ -116,6 +111,47 @@
             console.log(bookings)
 
 
+             s = "http://localhost:8080/get_worker/"+$userId
+            
+            let res2 = await fetch(s, {
+     
+                method: "GET",
+                headers : {
+                    "Content-type": "application/json",
+                    "Accept" : "application/json",
+                    "Access-Control-Allow-Origin": "http://localhost:8080"
+                }
+            })
+
+
+            let w = await res2.json()
+            let coms = w.comments
+            console.log(coms)
+            
+
+                for(let i =0;i<coms.length;i++){
+
+                    let temp = {}
+                    temp["feed"] = coms[i]
+                    console.log(temp)
+                        feedback.push(temp)
+
+                }
+
+            console.log(feedback)
+
+
+        }
+        )
+
+        async function deletefooter2() {
+            f1 = false;
+            f2 = false;
+            f3 = false;
+            f4 = true;
+
+
+            
 
 
 
@@ -138,34 +174,7 @@
 
 
 
-            let s = "http://localhost:8080/get_worker/"+$userId
             
-            let res = await fetch(s, {
-     
-                method: "GET",
-                headers : {
-                    "Content-type": "application/json",
-                    "Accept" : "application/json",
-                    "Access-Control-Allow-Origin": "http://localhost:8080"
-                }
-            })
-
-
-            let w = await res.json()
-            let coms = w.comments
-            console.log(coms)
-            
-
-                for(let i =0;i<coms.length;i++){
-
-                    let temp = {}
-                    temp["feed"] = coms[i]
-                    console.log(temp)
-                        feedback.push(temp)
-
-                }
-
-            console.log(feedback)
 
 
             document.getElementById("myTable").deleteTFoot();

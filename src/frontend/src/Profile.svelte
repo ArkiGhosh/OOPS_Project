@@ -1,5 +1,6 @@
     <script>
         import { Router, navigate } from "svelte-navigator";
+        import {onMount} from 'svelte';
         import {
             Label,
             Input,
@@ -43,12 +44,12 @@
         let amount;
      
         let bookings = []
-        async function getbookings(){
-            f4 = true;
-            f2 = false;
 
 
-            let s = "http://localhost:8080/user/"+$userId
+        onMount(
+
+            async () =>{
+                let s = "http://localhost:8080/user/"+$userId
             
             let res = await fetch(s, {
      
@@ -89,6 +90,16 @@
             }
 
             console.log(bookings)
+            }
+
+        )
+
+        async function getbookings(){
+            f4 = true;
+            f2 = false;
+
+
+            
 
             document.getElementById("myTable1").deleteTFoot();
         }
