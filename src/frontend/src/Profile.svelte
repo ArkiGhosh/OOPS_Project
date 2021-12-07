@@ -180,7 +180,7 @@
                         <DropdownToggle nav caret>Options</DropdownToggle>
                         <DropdownMenu end>
                             <DropdownItem
-                                ><a href="/Userdash"
+                                ><a href="#" on:click={nav1}
                                     >Dashboard</a
                                 ></DropdownItem
                             >

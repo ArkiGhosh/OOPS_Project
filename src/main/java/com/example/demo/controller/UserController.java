@@ -102,7 +102,7 @@ public class UserController
         User user = optionaluser.get();
         
         List<String> l = user.getBookingids();
-        if (l.size()>5 && (l.size())%5==0)
+        if (l!=null && l.size()>0 && (l.size())%5==0)
         {
             flag=true;
             promo = promo + String.valueOf(new Random().nextInt(10000));
@@ -146,8 +146,11 @@ public class UserController
     if (optionalBoo.isPresent()) {
     User woo = optionalBoo.get();
     
-    List<String> li = woo.getBookingids();
-    
+    List<String> li = new ArrayList<String>();
+
+    if(woo.getBookingids()!=null)
+        li = woo.getBookingids();
+
     li.add(booking);
     
     woo.setBookingids(li);
