@@ -8,5 +8,7 @@ import org.springframework.data.repository.CrudRepository;
 
 public interface SpacesRepository extends CrudRepository<Spaces,String> {
     
+    @AllowFiltering
+    Spaces findBySpace(String space);
 }
 

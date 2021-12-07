@@ -15,7 +15,7 @@ import lombok.Setter;
 public class Spaces {
  @PrimaryKey 
  private String id;
- private String space_name;
+ private String space;
  private String location;
  private List<String> slot_num;
 }

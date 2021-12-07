@@ -84,14 +84,23 @@ public class SlotsController
   return optionalEmp;
  }
  
- @DeleteMapping(value = "/employee/{id}", produces = "application/json; charset=utf-8")
- public String deleteEmployee(@PathVariable String id) {
-  Boolean result = employeeRepository.existsById(id);
-  employeeRepository.deleteById(id);
+ @GetMapping(value = "/slot_del/{slotnum}", produces = "application/json; charset=utf-8")
+ public String deleteEmployee(@PathVariable String slotnum) {
+  Boolean result = true;
+  slotsRepository.deleteBySlotnum(slotnum);
+  
   return "{ \"success\" : "+ (result ? "true" : "false") +" }";
  }
- 
+
  */
+ @CrossOrigin
+    @DeleteMapping("/remove_slot/{slot_num}")
+    public void delete_slot(@PathVariable String slot_num)
+    {
+        Slots slot = slotsRepository.findBySlotnum(slot_num);
+        slotsRepository.delete(slot);
+    }
+ 
  /*
  @CrossOrigin 
  @PostMapping("/slots")
@@ -117,9 +126,10 @@ public class SlotsController
         slot.setSpace(spacename);
         slotsRepository.save(slot);
 
-        
+        /*
         Iterable<Spaces> all_spaces = spacesRepository.findAll();
         
+
         all_spaces.forEach( space->
             {
                 if (space.getSpace_name()==spacename)
@@ -135,6 +145,22 @@ public class SlotsController
                 }
             }
         );
+
+        */
+        Spaces spc = spacesRepository.findBySpace(spacename);
+
+        
+        List<String> li = new ArrayList<String>();
+
+        if(spc.getSlot_num()!=null)
+            li = spc.getSlot_num();
+        
+        li.add(slotnum);
+        spc.setSlot_num(li);
+        spacesRepository.save(spc);
+
+
+
     }
 
 }

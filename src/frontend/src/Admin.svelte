@@ -102,10 +102,10 @@
      
         async function spacedata(spc,lc,sl){
             let body = {
-                id: 1,
-                space_name: spc,
+                id: spc,
+                space: spc,
                 location: lc,            
-                slot_num: [sl]
+               
             };
      
             spacesarray.push(body);
@@ -246,6 +246,21 @@
                 },
             });
         }
+
+        async function delspc(id){
+
+            let s = "http://localhost:8080/delete_space/" + id;
+     
+            fetch(s, {
+                method: "DELETE",
+                headers: {
+                    "Content-type": "application/json",
+                    Accept: "application/json",
+                    "Access-Control-Allow-Origin": "http://localhost:8080",
+                },
+            });            
+
+        }
      
      
         async function managespaces() {
@@ -264,7 +279,7 @@
 
 
 
-            const s = "http://localhost:8080/spaces";
+            let s = "http://localhost:8080/spaces";
      
             let res = await fetch(s, {
                 method: "GET",
@@ -277,7 +292,34 @@
      
             spacesarray = await res.json();
             
+            
+            for(let i= 0;i<spacesarray.length;i++){
 
+                s = "http://localhost:8080/slots/space/"+spacesarray[i]["space"];
+     
+            let res2 = await fetch(s, {
+                method: "GET",
+                headers: {
+                    "Content-type": "application/json",
+                    "Accept": "application/json",
+                    "Access-Control-Allow-Origin": "http://localhost:8080",
+                },
+            });
+
+
+            let slottts = await res2.json()
+
+            let slotts = []
+
+            for(let j =0;j<slottts.length;j++){
+                slotts.push(slottts[j]["slotnum"])
+            }
+
+            console.log(slotts)
+
+            spacesarray[i]["slots"] = slotts
+
+            }
      
      
         }
@@ -326,13 +368,13 @@
 
             spacesarray.push(body);
             addslot = false;
-            g1 = true;
+            g1 = false;
             f2 = false;
 
-           const s = "http://localhost:8080/add_slot/"+spaces+"/"+slotnum;
+           const s = "http://localhost:8080/remove_slot/"+slotnum;
      
             let res = await fetch(s, {
-                method: "GET",
+                method: "DELETE",
                 headers: {
                     "Content-type": "application/json",
                     "Accept": "application/json",
@@ -723,7 +765,7 @@
             id="myTable1"
         >
             <Column header="#" width="2rem">
-                <Button on:click={() => del(row.id)}>X</Button>
+                <Button on:click={() => delspc(row.id)}>X</Button>
                 <!--  -->
             </Column>
             <Column header="ID" width="8rem">
@@ -733,10 +775,10 @@
                 {row.location}
             </Column> -->
             <Column header="Space" width="8rem">
-                {row.space_name}
+                {row.space}
             </Column>
             <Column header="Slot" width="8rem">
-                {row.slot_num}
+                {row.slots}
             </Column>
         </Table>
     </div>
@@ -838,14 +880,10 @@
                     bind:value={spaces}
                     style="width:14rem; align-self:center"
                 /><br />
-                Slot: <Input
-                    type="text"
-                    bind:value={slotnum}
-                    style="width:14rem; align-self:center"
-                /><br />
+             
                 <button
                     style="align-self:center;width:8rem;align-text:center;color:#333;background-color:lawngreen;border-color:lawngreen"
-                    on:click|preventDefault={()=>spacedata(spaces,"A",slotnum)}>Add</button
+                    on:click|preventDefault={()=>spacedata(spaces,"A")}>Add</button
                 >
             </div>
         </form>

@@ -405,6 +405,23 @@
         else correct_promo = "no"
 
     }
+
+    let spaces = []
+
+    async function getspaces(){
+        let s = "http://localhost:8080/spaces"
+        let res = await fetch(s, {
+            method: "GET",
+            headers: {
+                "Content-type": "application/json",
+                Accept: "application/json",
+                "Access-Control-Allow-Origin": "http://localhost:8080",
+            },
+        });
+
+        spaces = await res.json()
+
+    }
  
     console.log($userName);
 </script>
@@ -476,7 +493,13 @@
         <FormGroup>
             <Label for="#">Location:</Label>
  
-            <Input type="select" bind:value={loc}>
+            <Input type="select" bind:value={loc} on:click={getspaces}>
+            <!--
+                {#each spaces as spc}
+                    
+                    <option value="{spc.space}" > {spc.spc} </option>
+                {/each}
+            -->
                 <option value="A" selected> A </option>
                 <option value="B"> B </option>
             </Input>
