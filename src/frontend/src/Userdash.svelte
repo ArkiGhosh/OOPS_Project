@@ -55,7 +55,7 @@
  
     let discount = 0
     let loc;
-    let date, intime, outtime;
+    let date, intime=0, outtime=23;
     let cost;
     let waiting_list_vis = [];
     let waiting_list_list = {};
@@ -422,7 +422,14 @@
         spaces = await res.json()
 
     }
- 
+
+    let timething = ""
+    $:{
+        if(intime>=outtime){
+            timething = "false"
+        }
+        else timething = "true"
+    }
     console.log($userName);
 </script>
  
@@ -539,19 +546,28 @@
                                     style="width: 6rem;"
                                     bind:value={outtime}
                                 >
+
                                     {#each Array(24) as _, i}
                                         <option value={i}>{i}</option>
                                     {/each}
                                 </Input>
+                                {#if timething=="false"}
+                                    <Alert color="warning" dismissible>Enter outtime greater than intime</Alert>
+                                {/if}
                             </Card>
                         </Col>
                     </div>
                 </Row>
             </Container>
         </FormGroup>
-        <button class="search" type="submit" on:click={search}
-            ><b>Search</b></button
-        >
+
+        {#if timething=="true"}
+        <button class="search" type="submit" on:click={search}><b>Search</b></button>
+        {:else}
+
+        <button class="search" type="submit" on:click={search} disabled>
+            <b>Search</b></button>
+        {/if}
     </form>
 </div>
 <br /><br />

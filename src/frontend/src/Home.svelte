@@ -65,6 +65,22 @@
 
                 userName.set(users[i]["username"])
                 userId.set(users[i]["id"])
+
+                let s = "http://localhost:8080/spaces"
+                let res = await fetch(s, {
+                method: "GET",
+                headers: {
+                    "Content-type": "application/json",
+                    Accept: "application/json",
+                    "Access-Control-Allow-Origin": "http://localhost:8080",
+                    },
+                });
+
+                $spaCes = await res.json()
+                console.log($spaCes)
+
+
+
                 nav2();
                 }
                 else{

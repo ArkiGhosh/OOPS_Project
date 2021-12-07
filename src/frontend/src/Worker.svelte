@@ -328,6 +328,9 @@
                 <Column header="Cost" width="8rem">
                     {row.cost}
                 </Column>
+                <Column header="Date" width="8rem">
+                    {row.date}
+                </Column>
                 <Column header="Services" width="8rem">
                     {row.services}
                 </Column>

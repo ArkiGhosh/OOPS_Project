@@ -154,7 +154,7 @@ import { Button } from "sveltestrap";
                         <div>
                             First
                             name:&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&ensp;
-                            <input type="text" name="firstname" class="firstname" bind:value="{fn}"/>
+                            <input type="text" name="firstname" class="firstname" required bind:value="{fn}"/>
                         </div>
                         <br />
      
@@ -167,7 +167,7 @@ import { Button } from "sveltestrap";
      
                         <div>
                             Username:&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&ensp;
-                            <input type="text" name="username" class="username" bind:value="{un}"/>
+                            <input type="text" name="username" class="username" required bind:value="{un}"/>
                         </div>
                         <br />
      
@@ -178,6 +178,7 @@ import { Button } from "sveltestrap";
                                 name="password"
                                 class="password"
                                 bind:value="{password}"
+                                required
                             />
                         </div>
                         <br />
@@ -189,26 +190,27 @@ import { Button } from "sveltestrap";
                                 name="cpassword"
                                 class="cpassword"
                                 bind:value="{cpassword}"
+                                required
                             />
                         </div>
                         <br />
      
                         <div>
                             Residential Address: &emsp;&emsp;&ensp;
-                            <input type="text" name="address" class="address" bind:value="{ad}"/>
+                            <input type="text" name="address" class="address" required bind:value="{ad}"/>
                         </div>
                         <br />
      
                         <div>
                             Email ID:
                             &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&nbsp;
-                            <input type="text" name="email" class="email" bind:value = {user_email}>
+                            <input type="email" name="email" class="email" required bind:value = {user_email}>
                         </div>
                         <br />
      
                         <div>
                             Mobile number: &nbsp;&emsp;&emsp;&emsp;&emsp;&nbsp;
-                            <input type="text" name="number" class="number" bind:value="{nm}"/>
+                            <input type="text" name="number" class="number" required bind:value="{nm}"/>
                         </div>
                         <br />
      
