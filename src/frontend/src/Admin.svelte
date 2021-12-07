@@ -614,10 +614,10 @@
                     {row.slot}
                 </Column>
                 <Column header="Hours Worked" width="8rem">
-                    {row.hours}
+                    {row.hours_worked}
                 </Column>
                 <Column header="Rating" width="8rem">
-                    {row.rating}
+                    {row.avg_rating}
                 </Column>
                 <Column header="#" width="2rem">
                     <Button on:click={() => del(row.id)}>X</Button>

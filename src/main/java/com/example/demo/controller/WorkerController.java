@@ -44,7 +44,7 @@ public class WorkerController {
         Slots s = slotsRepository.findBySlotnum(worker.getSlot());
         s.setWorkerid(worker.getId());
         slotsRepository.save(s);
-        
+
        return "added";
     }
 
@@ -102,7 +102,7 @@ public class WorkerController {
     li.add(booking);
 
    woo.setBookingids(li);
-
+    woo.setHours_worked(woo.getHours_worked()+1);
    workerRepository.save(woo);
 
 
