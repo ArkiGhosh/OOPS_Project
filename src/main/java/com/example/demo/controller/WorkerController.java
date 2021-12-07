@@ -44,7 +44,7 @@ public class WorkerController {
         Slots s = slotsRepository.findBySlotnum(worker.getSlot());
         s.setWorkerid(worker.getId());
         slotsRepository.save(s);
-
+        
        return "added";
     }
 
